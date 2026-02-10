@@ -13,7 +13,7 @@ Hráč na začátku hry “postaví” svou stranu - z názorů, ekonomických p
 
 Interface
 
-Obrazovka rozdělena na 3 zóny - hlavní (zde všechny formuláře, tlačítka, posuvníky apod. + popis aktuálnímu dění), informační (zde se hráč dozvídá o důsledcích jeho kroků, forma světového zpravodajství), mapa (mapa státu, ve kterém se odehrává hra, pro zvětšení estetického dojmu a prohloubení zážitku ze hry, možnost ji rozkliknout a ukázat větší mapu kontinentu - zde zvýraznění přátelé a nepřátele a jejich názor k tvému státu). // ukázka cca grafického rozhraní (spíš myšlenka grafického rozhraní)
+Obrazovka rozdělena na 3 zóny - hlavní (zde všechny formuláře, tlačítka, posuvníky apod. + popis aktuálnímu dění), informační (zde se hráč dozvídá o důsledcích jeho kroků, forma světového zpravodajství), mapa (mapa státu, ve kterém se odehrává hra, pro zvětšení estetického dojmu a prohloubení zážitku ze hry, možnost ji rozkliknout a ukázat větší mapu kontinentu - zde zvýraznění přátelé a nepřátele a jejich názor k tvému státu). 
 
 
 Knihovny
