@@ -1,4 +1,4 @@
-Reffery (pracovní název hry)
+Arbiter (pracovní název hry)
 
 
 Základní idea
