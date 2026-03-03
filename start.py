@@ -56,7 +56,6 @@ def pre_game():
         if counter < speed_typing * len(message):
             counter += 1 
 
-
         text1 = get_font_michroma(50).render(message[0:counter//speed_typing], True, "#fafafa")
         text1_rect = text1.get_rect(center=(640, 360))
         screen.blit(text1, text1_rect)
@@ -69,17 +68,30 @@ def pre_game():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     game_menu()
-                if event.key == pygame.K_RETURN or event.key == pygame.K_RIGHT and active_message <= len(messages):
+                if event.key == pygame.K_RETURN or event.key == pygame.K_RIGHT or event.key == pygame.K_SPACE and active_message <= len(messages):
                     active_message += 1
                     if active_message == len(messages):
                         first_election()
                     else: 
                         message = messages[active_message]   
                         counter = 0
-                if event.key == pygame.K_LEFT and active_message > 0:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_BACKSPACE and active_message > 0:
                     active_message -= 1
                     message = messages[active_message]
                     counter = 0
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1 and active_message <= len(messages):
+                    active_message += 1
+                    if active_message == len(messages):
+                        first_election()
+                    else: 
+                        message = messages[active_message]   
+                        counter = 0
+                elif event.button == 3 and active_message > 0:
+                    active_message -= 1
+                    message = messages[active_message]
+                    counter = 0
+
         pygame.display.update()
 
 def first_election():
@@ -109,10 +121,9 @@ def first_election():
                 pygame.quit()  
                 sys.exit()
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1: 
-                    if PLAY_BACK.check_input(PLAY_MOUSE_POS):
-                        game_menu()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if PLAY_BACK.check_input(PLAY_MOUSE_POS):
+                    game_menu()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     game_menu()
@@ -122,29 +133,6 @@ def first_election():
 def main_play():
     pygame.display.set_caption("Game")
     pre_game()
-
-
-
-
-        # PLAY_MOUSE_POS = pygame.mouse.get_pos()
-        # screen.fill((0, 0, 0))
-
-        # play_text = get_font_michroma(90).render("HRA", True, "red")
-        # play_rect = play_text.get_rect(center=(640, 260))
-
-        # map_small_button = pygame.image.load("img/map_small_button.png")
-
-        # screen.blit(play_text, play_rect)
-
-        # PLAY_BACK = buttons.Button(image=None, pos=(640, 460), text_input = "ZPĚT", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None)
-        # PLAY_BUTTON = buttons.Button(image=map_small_button, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None)
-
-        # PLAY_BACK.change_color(PLAY_MOUSE_POS)
-        
-        # PLAY_BACK.update(screen)
-        # PLAY_BUTTON.update(screen)
-
-
                 
 def options():
     pygame.display.set_caption("Options")
