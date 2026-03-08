@@ -1,0 +1,30 @@
+[project]
+name = "arbiter"
+version = "0.0.1"
+authors = [
+  { name="Jan Kaluza", email="kaluzja24@sps-prosek.cz" },
+]
+
+description = "Simple beautiful game in pygame"
+readme = "README.md"
+requires-python = ">=3.10.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[project.scripts]
+arbiter = "src.start"
+
+
+[project.urls]
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

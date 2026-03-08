@@ -1,0 +1,1 @@
+message_one = ["Vítejte  v Charvátsku,", " v zemi s 16 miliony obyvatel, bujnou přírodou a vyspělým hospodářstvím.", " Každou chvíli zde začínají volby a vy máte příležitost se jich zůčastnit. ","Máte příležitost převzít vládu a konat to nejlepší pro charvátské obyvatele...", "...a konat to nejlepší pro sebe..."]
