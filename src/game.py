@@ -68,12 +68,15 @@ class Game():
                     self.BACKSPACE = True
                 if event.key == pygame.K_ESCAPE:
                     self.ESC = True
+                self.TEXT = True
+                self.LETTER = event.unicode
 
         
     def reset_keys(self):
         self.MOUSE_CLICK_L, self.MOUSE_CLICK_R = False, False
         self.LEFT, self.RIGHT, self.UP, self.DOWN = False, False, False, False
         self.ENTER, self.SPACE, self.BACKSPACE, self.ESC = False, False, False, False
+        self.TEXT = False
 
 class Part():
     def __init__(self, game): 
@@ -209,9 +212,9 @@ class PreGame(Part):
 class FirstPlay(Part):
     def __init__(self, game):
         Part.__init__(self, game)
+        self.party_name_writing = False
 
         self.game.screen.fill((0,0,0))
-
         self.game.reset_keys()
 
     def display_play(self):
@@ -219,6 +222,13 @@ class FirstPlay(Part):
         self.clock = pygame.time.Clock()
         self.clock.tick(20)
         self.small_map = pygame.image.load("../img/map_small_button.png")
+        
+        self.party_name = ''
+        self.party_name_input = pygame.Rect(400, 50, 140, 32)
+
+        self.party_name_input_color_active = pygame.Color(240, 240, 240)
+        self.party_name_input_color_pasive = pygame.Color(140, 140, 140)
+        self.party_name_input_color = self.party_name_input_color_pasive
 
         while self.run_display:
             self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None)
@@ -226,11 +236,22 @@ class FirstPlay(Part):
             self.map_button.update(self.game.screen)
             width, height = self.game.screen.get_size()
             self.par_box = pygame.Rect(0, 250, 350, height-250)
-
             pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
             with open('../txt/first_election.txt', encoding='utf-8') as text:
                 self.text = json.load(text)
             display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 390, 600, 10, 80, "Název strany:", get_font_michroma(30), (240, 240, 240))
+
+            if self.party_name_writing:
+                self.party_name_input_color = self.party_name_input_color_active
+            else:
+                self.party_name_input_color = self.party_name_input_color_pasive
+            
+            self.PARTY_NAME_BOX = get_font_michroma(30).render(self.party_name, True, (self.party_name_input_color))
+
+            pygame.draw.rect(self.game.screen, (self.party_name_input_color), self.party_name_input, 2) 
+            self.game.screen.blit(self.PARTY_NAME_BOX, (self.party_name_input.x + 5, self.party_name_input.y + 5))
+            self.party_name_input.w = max(100, self.PARTY_NAME_BOX.get_width() + 10)
 
             self.game.check_events()
             self.check_input()
@@ -239,12 +260,24 @@ class FirstPlay(Part):
     def check_input(self):
         if self.game.ESC:
             self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.party_name_input.collidepoint(pygame.mouse.get_pos()):
+                self.party_name_writing = True
+            else:
+                self.party_name_writing = False
+        if self.party_name_writing:
+            if self.game.TEXT and not self.game.BACKSPACE:
+                self.party_name += self.game.LETTER
+            if self.game.BACKSPACE:
+                self.party_name = self.party_name[:-1]
 
 def display_text_in_box(screen, start_w, end_w, start_h, end_h, text, font, color):
     par = [word.split(' ') for word in text.splitlines()]
     space = font.size(' ')[0]
     start_w += 10
     end_w -= 10
+    start_h += 10
+    end_h -= 10
     old_w = start_w
     for lines in par:
         for words in lines:
@@ -253,15 +286,7 @@ def display_text_in_box(screen, start_w, end_w, start_h, end_h, text, font, colo
             if start_w + word_width >= end_w:
                 start_w = old_w
                 start_h += word_height
-            if start_h >= end_h:
-                return
             screen.blit(words_box, (start_w, start_h))
             start_w += word_width + space
         start_w = old_w
         start_h += word_height
- 
-
-
-            
-
-# display_text_in_box(0, "ahoj, je den 49 a nemam kraten a ro je to \n a totot 5dak 2 nemsm halda totot 5dak 2 nemsm halda totot 5dak 2 nemsm hald", 0, 0, 0)
