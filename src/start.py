@@ -30,11 +30,12 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Menu")
 
 clock = pygame.time.Clock()
+clock.tick(20)
 
-menu_bg = pygame.image.load("img/menu_bg.png")
+menu_bg = pygame.image.load("../img/menu_bg.png")
 
 pygame.display.update()
-clock.tick(20)
+
 
 
 
@@ -103,7 +104,7 @@ def first_election():
         play_text = get_font_michroma(90).render("HRA", True, "red")
         play_rect = play_text.get_rect(center=(640, 260))
 
-        map_small_button = pygame.image.load("img/map_small_button.png")
+        map_small_button = pygame.image.load("../img/map_small_button.png")
 
         screen.blit(play_text, play_rect)
 
@@ -173,8 +174,8 @@ def game_menu():
     while running:
         screen.blit(menu_bg, (0, 0))
 
-        menu_button = pygame.image.load("img/menu_button.png")
-        menu_button_hover = pygame.image.load("img/menu_button_hover.png")
+        menu_button = pygame.image.load("../img/menu_button.png")
+        menu_button_hover = pygame.image.load("../img/menu_button_hover.png")
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
