@@ -18,11 +18,11 @@ dynamic = ["dependencies"]
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [project.scripts]
-arbiter = "src.start"
-
-
-[project.urls]
+arbiter = "src.start:main"
 
 
 [build-system]
