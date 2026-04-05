@@ -22,79 +22,104 @@ point_class = {
 
 prefc = {
     "education" : {
-        "point_class" : point_class["1-5"] 
-    },
+        "point_class" : point_class["1-5"],
+        "name" : "Vzdělávání"
+    }, 
     "healthcare" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Zdravotnictví" 
     },
     "pensions" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Důchody" 
     },
     "energy" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Energetika" 
     },
     "infrastructure" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Doprava" 
     },
     "defense" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Obrana" 
     }, 
     "agroculture" : {
-        "point_class" : point_class["1-4"] 
+        "point_class" : point_class["1-4"],
+        "name" : "Zemědělství" 
     },
     "industry" : {
-        "point_class" : point_class["1-4"] 
+        "point_class" : point_class["1-4"],
+        "name" : "Průmysl" 
     },
     "startups" : {
-        "point_class" : point_class["1-4"] 
+        "point_class" : point_class["1-4"],
+        "name" : "Start-upy" 
     },
     "housing" : {
-        "point_class" : point_class["1-4"] 
+        "point_class" : point_class["1-4"], 
+        "name" : "Bydlení"
     },
     "environment" : {
-        "point_class" : point_class["1-4"] 
+        "point_class" : point_class["1-4"], 
+        "name" : "Životní prostředí" 
     },
     "culture" : {
-        "point_class" : point_class["1-4"] 
+        "point_class" : point_class["1-4"],
+        "name" : "Kultura" 
     }, 
     "alliance" : {
-        "point_class" : point_class["1-4"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Vztah s aliancí" 
     },
     "small_alliance" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Vztah s malou aliancí" 
     },
     "enemy" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Vztah k nepříteli" 
     },
     "migration" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Vztah k migraci" 
     },
     "minorities" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Vztah k menšinám" 
     },
     "human_tax" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Daň (lidé)" 
     },
     "corporate_tax" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Daň (firmy)" 
     },
     "freedom" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"], 
+        "name" : "Důležitost svobody" 
     },
     "religion" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Důležitost náboženství" 
     },
     "corruption" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Boj proti korupci" 
     },
     "digitization" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Digitalizace"
     },
     "debts" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Splacení dluhů" 
     },
     "referendum" : {
-        "point_class" : point_class["1-5"] 
+        "point_class" : point_class["1-5"],
+        "name" : "Referenda" 
     }
 }
 
@@ -103,10 +128,10 @@ age_groups = {
         "years" : "18-39"
     },
     "s" : {
-        "quantity" : "40-65"
+        "years" : "40-65"
     },
     "d" : {
-        "quantity" : "66-85"
+        "years" : "66-85"
     }
 }
 
@@ -624,11 +649,7 @@ voters = {
         "commitment" : False
     },
 }
-parties = {
-    "xxx" : {
-        "opinion" : {}
-    }
-}
+parties = {}
 
 data = {
     "education" : 4,
