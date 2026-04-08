@@ -6,3 +6,5 @@ def main():
     while g.running:
         g.main_menu.display_menu()
         g.game_loop()
+
+main()
