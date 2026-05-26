@@ -1,13 +1,22 @@
 import random
 import lib
+import json
 
-def get_election_result(name, data):
+"""modul pro výpočet výsledků voleb"""
+
+def get_election_result(name: str, data: dict):
+    """vytvoření a uložení kompletních výsledků voleb na základě vstupních hodnot"""
     parties = lib.parties
+
     voters = lib.voters
     parties_name_bank = lib.parties_name_bank
     prefc = lib.prefc
 
     my_party = {name : data}
+    my_party = {name : {
+        "data" : data,
+        "seats" : 0
+    }}
     parties.update(my_party)
 
     get_party_result(name, data)
@@ -25,14 +34,68 @@ def get_election_result(name, data):
             points = get_point(values)
             one_prefer_points = {one_prefer : points}
             party_data.update(one_prefer_points)
-
         party_name = parties_name_bank[a]
-        party_entry = {party_name : party_data}
+        party_entry = {party_name : {
+            "data" : party_data,
+            "seats" : 0
+        }}
         parties.update(party_entry)
 
         get_party_result(party_name, party_data)
+    update_seats()
+    
+def update_seats():
+    """výpočet a uložení počtu křesel pro jednotlivé strany"""
+    parties = lib.parties
+    voters = lib.voters
 
-def get_party_result(name, data):
+    parties_list = []
+    voters_list = []
+    seats_list = []
+
+    for party in parties:
+        count = 0
+        for voter in voters:
+            if voters[voter]["commitment"] == party:
+                count += voters[voter]["quantity"]
+        parties_list.append(party)
+        voters_list.append(count)
+
+    winner = parties_list[voters_list.index(max(voters_list))]
+
+    winner_index = voters_list.index(max(voters_list))
+    winner_party = parties_list[winner_index]
+    winner_voters = voters_list[winner_index]
+    parties_list.remove(winner_party)
+    voters_list.remove(winner_voters) 
+
+    parties[winner]["seats"] = 101    
+
+    rest = sum([i for i in voters_list])
+    one_seat = rest / 99
+
+    for one_party in parties_list:
+        index = parties_list.index(one_party)
+        votes = voters_list[index]
+        seats = round(votes / one_seat)
+        seats_list.append(seats)
+
+    # while True:
+    #     if sum([i for i in seats_list]) > 99:
+    #         top_party = voters_list.index(max(voters_list))
+    #         voters_list[top_party] -= 1
+    #     elif sum([i for i in seats_list]) < 99:
+    #         top_party = voters_list.index(max(voters_list))
+    #         voters_list[top_party] += 1
+    #     else:
+    #         break
+    
+    for party in parties_list:
+        seats = seats_list[parties_list.index(party)]
+        parties[party]["seats"] = seats
+
+def get_party_result(name: str, data: dict):
+    """výpočet a uložení výsledků pro jednu stranu"""
     voters = lib.voters
     for voter in voters:
         if voters[voter]["commitment"] == False:
@@ -47,7 +110,8 @@ def get_party_result(name, data):
                 voters[voter]["commitment"] = name
     return voters
 
-def get_probability(number_one, number_two):
+def get_probability(number_one: float, number_two: float):
+    """výpočet pravděpodobnosti"""
     if number_one > number_two:
         return round(number_two/number_one, 2)
     elif number_one == number_two:
@@ -57,7 +121,8 @@ def get_probability(number_one, number_two):
     else:
         return False
     
-def get_avarage(numbers):
+def get_avarage(numbers: dict):
+    """výpočet průměru pro jednu stranu"""
     count_numbers = 0
     sum_numbers = 0
     for number in numbers:
@@ -66,7 +131,8 @@ def get_avarage(numbers):
             sum_numbers += numbers[number]
     return round(sum_numbers/count_numbers, 2)
 
-def get_one_result(number):
+def get_one_result(number: float):
+    """výpočet, zda se volič rozhodne pro stranu, na základě pravděpodobnosti"""
     if number >= 0 and number <= 1:
         new = number*100
         maybe = random.randint(1, 200)
@@ -77,7 +143,8 @@ def get_one_result(number):
     else:
         return False
 
-def get_opinion(number, values, max_rest_count):
+def get_opinion(number: int, values: dict, max_rest_count: int):
+    """výpočet a úprava hlasovacích preferencí pro jednu stranu"""
     rest = 0
     if number in values:
         old = values[number] 
@@ -104,7 +171,8 @@ def get_opinion(number, values, max_rest_count):
     return values
 
     
-def get_point(values):
+def get_point(values: dict):
+    """výpočet hlasovacích preferencí pro jednu stranu, na základě upravených preferencí"""
     i = random.randint(1, 100)
     y = 0
     for value in values:
@@ -112,3 +180,12 @@ def get_point(values):
             return value
         else:
             y += values[value]
+
+def restart_game():
+    lib.parties.clear()
+
+    with open('../txt/user_data/voters.txt', encoding='utf-8') as voters_data:
+        voters = json.load(voters_data)
+    
+    lib.voters.clear()
+    lib.voters.update(voters)

@@ -1,5 +1,7 @@
 from game import Game
 
+"""spouštěcí soubor pro hru"""
+
 def main():
     g = Game()
 

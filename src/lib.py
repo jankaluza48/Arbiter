@@ -1,3 +1,5 @@
+"""proměnné pro volby, voliče a strany"""
+
 point_class = {
     "1-5" : {
         "values" : {
