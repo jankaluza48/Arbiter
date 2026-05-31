@@ -10,6 +10,9 @@ from lib import parties, voters
 class Game():
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
+
+        play_background_music("../sound/Arbiter.mp3")
         self.running, self.playing = True, False
 
         self.screen_width, self.screen_height = 1280, 720
@@ -627,30 +630,32 @@ class FourthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.state_one_button.check_input(pygame.mouse.get_pos()):
-                player_history["first_diplomatic_route"] = "lupanar"
+                player_history["first_diplomatic_route"] = "state_one"
                 change_game_variables({"diplomacy_alliance" : 2})
                 self.run_display = False
                 next_play = FifthPlay(self.game)
                 next_play.display_play()
             if self.state_two_button.check_input(pygame.mouse.get_pos()):
-                player_history["first_diplomatic_route"] = "parsko"
+                player_history["first_diplomatic_route"] = "state_two"
                 change_game_variables({"diplomacy_alliance" : 1})
                 self.run_display = False
                 next_play = FifthPlay(self.game)
                 next_play.display_play()
             if self.state_three_button.check_input(pygame.mouse.get_pos()):
-                player_history["first_diplomatic_route"] = "samova_rise"
+                player_history["first_diplomatic_route"] = "state_three"
                 change_game_variables({"diplomacy_enemy" : 1, "diplomacy_alliance" : -1})
                 self.run_display = False
                 next_play = FifthPlay(self.game)
                 next_play.display_play()
 
 class FifthPlay(Part):
-    def __init__(self, game, route):
+    def __init__(self, game):
         Part.__init__(self, game)
 
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
+
+        route = player_history["first_diplomatic_route"]
 
         with open(f'../txt/first_diplomatic_route_{route}_reaction.txt', encoding='utf-8') as reaction:
             self.reaction = json.load(reaction)
@@ -720,10 +725,29 @@ class FifthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.yes_button.check_input(pygame.mouse.get_pos()):
+                if player_history["first_diplomatic_route"] == "state_one":
+                    change_game_variables({"diplomacy_alliance" : 2, "economy" : 1, "social" : 1, "radicalization" : 1, "army" : 1})
+                elif player_history["first_diplomatic_route"] == "state_two":
+                    change_game_variables({"diplomacy_alliance" : 1, "economy" : -1, "social" : 1})
+                elif player_history["first_diplomatic_route"] == "state_three":
+                    change_game_variables({"diplomacy_enemy" : 2, "diplomacy_alliance" : -1, "crime" : 1, "economy" : -1, "radicalization" : 1})
+                else:
+                    change_game_variables({"diplomacy_alliance" : 2, "economy" : 1, "social" : 1, "radicalization" : 1, "army" : 1})
+                player_history["first_diplomatic_route_offer"] = "yes"
                 self.run_display = False
                 next_play = SixthPlay(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
+                if player_history["first_diplomatic_route"] == "state_one":
+                    change_game_variables({"diplomacy_alliance" : -1, "economy" : -1, "radicalization" : 2, "diplomacy_enemy" : 1})
+                elif player_history["first_diplomatic_route"] == "state_two":
+                    change_game_variables({"diplomacy_alliance" : -1, "social" : -1, "radicalization" : -1})
+                elif player_history["first_diplomatic_route"] == "state_three":
+                    change_game_variables({"diplomacy_enemy" : -1, "diplomacy_alliance" : 1, "economy" : 1, "radicalization" : 1})
+                else:
+                    change_game_variables({"diplomacy_alliance" : -1, "economy" : -1, "radicalization" : 2, "diplomacy_enemy" : 1})
+
+                player_history["first_diplomatic_route_offer"] = "no"
                 self.run_display = False
                 next_play = SixthPlay(self.game)
                 next_play.display_play()
@@ -847,7 +871,8 @@ class SixthPlay(Part):
                         for button_selected in self.decision_buttons[group]:
                             if button_selected != button:
                                 self.decision_buttons[group][button_selected].reset_click_button()
-            if self.save_button.check_input(pygame.mouse.get_pos()):                
+            if self.save_button.check_input(pygame.mouse.get_pos()):   
+                player_history["alliance_subsidy"] = self.decision_data             
                 self.run_display = False
                 next_play = SeventhPlay(self.game)
                 next_play.display_play()
@@ -927,10 +952,14 @@ class SeventhPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.yes_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 1, "social" : 1, "radicalization" : -1})
+                player_history["media_funding"] = "yes"
                 self.run_display = False
                 next_play = EighthPlay(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : -1, "social" : -1, "radicalization" : 1})
+                player_history["media_funding"] = "no"
                 self.run_display = False
                 next_play = EighthPlay(self.game)
                 next_play.display_play()
@@ -944,15 +973,15 @@ class EighthPlay(Part):
 
         self.first = pygame.image.load("../img/medium_button.png")
         self.first_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.first_button = Button(image=self.first, pos=(1050, 300), text_input = "A", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.first_button = Button(image=self.first, pos=(1050, 300), text_input = "Nastavit poplatky", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         self.second = pygame.image.load("../img/medium_button.png")
         self.second_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.second_button = Button(image=self.second, pos=(1050, 450), text_input = "B", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.second_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.second, pos=(1050, 450), text_input = "Nechat z daní", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.second_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         self.third = pygame.image.load("../img/medium_button.png")
         self.third_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.third_button = Button(image=self.third, pos=(1050, 600), text_input = "C", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.third_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.third, pos=(1050, 600), text_input = "Vyhodit ředitele", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.third_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
@@ -1017,14 +1046,20 @@ class EighthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.first_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 1, "social" : -1, "radicalization" : -1})
+                player_history["board_reaction"] = "first"
                 self.run_display = False
                 next_play = NinthPlay(self.game)
                 next_play.display_play()
             if self.second_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"radicalization" : 1, "diplomacy_enemy" : 1})
+                player_history["board_reaction"] = "second"
                 self.run_display = False
                 next_play = NinthPlay(self.game)
                 next_play.display_play()
             if self.third_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : -1, "social" : 1, "radicalization" : 2, "diplomacy_enemy" : 1, "crime" : 2, "control_system" : 1})
+                player_history["board_reaction"] = "third"
                 self.run_display = False
                 next_play = NinthPlay(self.game)
                 next_play.display_play()
@@ -1112,14 +1147,20 @@ class NinthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.choice_one_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 2, "social" : -1, "radicalization" : 1})
+                player_history["demonstration_reaction"] = "choice_one"
                 self.run_display = False
                 next_play = TenthPlay(self.game)
                 next_play.display_play()
             if self.choice_two_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"social" : 1, "radicalization" : 1, "diplomacy_enemy" : 1, "control_system" : 1})
+                player_history["demonstration_reaction"] = "choice_two"
                 self.run_display = False
                 next_play = TenthPlay(self.game)
                 next_play.display_play()
             if self.choice_three_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : -1, "social" : -1, "radicalization" : 2, "diplomacy_enemy" : 1, "crime" : 2, "control_system" : 2})
+                player_history["demonstration_reaction"] = "choice_three"
                 self.run_display = False
                 next_play = TenthPlay(self.game)
                 next_play.display_play()
@@ -1199,10 +1240,14 @@ class TenthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.yes_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 2, "social" : 1, "crime" : 2, "control_system" : -1})
+                player_history["balcar_help"] = "yes"
                 self.run_display = False
                 next_play = EleventhPlay(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"social" : 1, "crime" : -1, "control_system" : 1})
+                player_history["balcar_help"] = "no"
                 self.run_display = False
                 next_play = EleventhPlay(self.game)
                 next_play.display_play()
@@ -1355,10 +1400,14 @@ class TwelfthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.yes_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 2, "social" : 1, "radicalization" : -2, "diplomacy_alliance" : 2})
+                player_history["president_offer"] = "yes"
                 self.run_display = False
                 next_play = ThirteenPlay(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"social" : 1, "control_system" : 1, "radicalization" : 1, "diplomacy_enemy" : 1})
+                player_history["president_offer"] = "no"
                 self.run_display = False
                 next_play = ThirteenPlay(self.game)
                 next_play.display_play()
@@ -1520,14 +1569,20 @@ class FourteenthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.first_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 1, "social" : -2, "radicalization" : -2, "diplomacy_alliance" : 1})
+                player_history["demonstration_action"] = "first"
                 self.run_display = False
                 next_play = FifteenthPlay(self.game)
                 next_play.display_play()
             if self.second_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"social" : 1, "control_system" : 1, "radicalization" : 2, "diplomacy_enemy" : 1})
+                player_history["demonstration_action"] = "second"
                 self.run_display = False
                 next_play = FifteenthPlay(self.game)
                 next_play.display_play()
             if self.third_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"radicalization" : 3, "diplomacy_enemy" : 2, "crime" : 2, "control_system" : 3})
+                player_history["demonstration_action"] = "third"
                 self.run_display = False
                 next_play = FifteenthPlay(self.game)
                 next_play.display_play()
@@ -1557,15 +1612,15 @@ class FifteenthPlay(Part):
 
         self.first = pygame.image.load("../img/medium_button.png")
         self.first_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.first_button = Button(image=self.first, pos=(1050, 300), text_input = "A", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.first_button = Button(image=self.first, pos=(1050, 300), text_input = "Uznat pravomoce", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         self.second = pygame.image.load("../img/medium_button.png")
         self.second_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.second_button = Button(image=self.second, pos=(1050, 450), text_input = "B", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.second_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.second, pos=(1050, 450), text_input = "Zpochybnit", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.second_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         self.third = pygame.image.load("../img/medium_button.png")
         self.third_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.third_button = Button(image=self.third, pos=(1050, 600), text_input = "C", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.third_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.third, pos=(1050, 600), text_input = "Vyměnit soudce", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.third_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
     def display_play(self):
@@ -1615,14 +1670,20 @@ class FifteenthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.first_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 1, "social" : -2, "radicalization" : -2, "diplomacy_alliance" : 1})
+                player_history["justice_ministry_decision"] = "first"
                 self.run_display = False
                 next_play = SixteenthPlay(self.game)
                 next_play.display_play()
             if self.second_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"social" : 1, "control_system" : 1, "radicalization" : 2, "diplomacy_enemy" : 1})
+                player_history["justice_ministry_decision"] = "second"
                 self.run_display = False
                 next_play = SixteenthPlay(self.game)
                 next_play.display_play()
             if self.third_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"radicalization" : 3, "diplomacy_enemy" : 2, "crime" : 2, "control_system" : 3})
+                player_history["justice_ministry_decision"] = "third"
                 self.run_display = False
                 next_play = SixteenthPlay(self.game)
                 next_play.display_play()
@@ -1701,10 +1762,14 @@ class SixteenthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.yes_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : -2, "social" : 1, "radicalization" : -1, "diplomacy_alliance" : 1})
+                player_history["sport_games_decision"] = "yes"
                 self.run_display = False
                 next_play = SeventeenthPlay(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 2, "social" : -1, "radicalization" : 1})
+                player_history["sport_games_decision"] = "no"
                 self.run_display = False
                 next_play = SeventeenthPlay(self.game)
                 next_play.display_play()
@@ -1792,11 +1857,11 @@ class EighteenthPlay(Part):
         self.first = pygame.image.load("../img/paper_red_button.png")
         self.first_hover = pygame.image.load("../img/paper_red_button_hover.png")
 
-        self.first_button = Button(image=self.first, pos=(500, 600), text_input = "A", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.first_button = Button(image=self.first, pos=(500, 600), text_input = "Přijmout", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
-        self.second_button = Button(image=self.first, pos=(800, 600), text_input = "B", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.first, pos=(800, 600), text_input = "Kritizovat", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
-        self.third_button = Button(image=self.first, pos=(1100, 600), text_input = "C", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.first, pos=(1100, 600), text_input = "Uzavřít hranice", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
@@ -1861,14 +1926,20 @@ class EighteenthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.first_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : -1, "social" : 1, "radicalization" : -3, "diplomacy_alliance" : 2})
+                player_history["migration_decision"] = "first"
                 self.run_display = False
                 next_play = NineteenthPlay(self.game)
                 next_play.display_play()
             if self.second_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 1, "social" : -1, "radicalization" : 2, "diplomacy_enemy" : 1})
+                player_history["migration_decision"] = "second"
                 self.run_display = False
                 next_play = NineteenthPlay(self.game)
                 next_play.display_play()
             if self.third_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({ "social" : 1, "radicalization" : 3, "diplomacy_alliance" : -2, "diplomacy_enemy" : 2, "crime" : 2, "control_system" : 3})
+                player_history["migration_decision"] = "third"
                 self.run_display = False
                 next_play = NineteenthPlay(self.game)
                 next_play.display_play()
@@ -1883,10 +1954,10 @@ class NineteenthPlay(Part):
 
         self.first = pygame.image.load("../img/medium_button.png")
         self.first_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.first_button = Button(image=self.first, pos=(1050, 150), text_input = "A", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.second_button = Button(image=self.first, pos=(1050, 300), text_input = "B", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.third_button = Button(image=self.first, pos=(1050, 450), text_input = "C", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.fourth_button = Button(image=self.first, pos=(1050, 600), text_input = "D", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.first_button = Button(image=self.first, pos=(1050, 150), text_input = "Ubrat peníze", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.first, pos=(1050, 300), text_input = "Nechat být", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.first, pos=(1050, 450), text_input = "Trochu zvýšit", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.fourth_button = Button(image=self.first, pos=(1050, 600), text_input = "Zvýšit výrazně", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
@@ -1954,18 +2025,26 @@ class NineteenthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.first_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"army" : -2, "diplomacy_alliance" : -3, "diplomacy_enemy" : 1, "radicalization" : 1, "control_system" : 1})
+                player_history["army_decision"] = "first"
                 self.run_display = False
                 next_play = TwentiethPlay(self.game)
                 next_play.display_play()
             if self.second_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"diplomacy_alliance" : -1, "diplomacy_enemy" : 1, "radicalization" : 2})
+                player_history["army_decision"] = "second"
                 self.run_display = False
                 next_play = TwentiethPlay(self.game)
                 next_play.display_play()
             if self.third_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"army" : 1, "diplomacy_alliance" : 1, "diplomacy_enemy" : -1, "radicalization" : 1, "control_system" : -1})
+                player_history["army_decision"] = "third"
                 self.run_display = False
                 next_play = TwentiethPlay(self.game)
                 next_play.display_play()
             if self.fourth_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"army" : 2, "economy" : 1, "diplomacy_alliance" : 2, "diplomacy_enemy" : -2, "radicalization" : 1, "control_system" : 1})
+                player_history["army_decision"] = "fourth"
                 self.run_display = False
                 next_play = TwentiethPlay(self.game)
                 next_play.display_play()
@@ -2044,10 +2123,14 @@ class TwentiethPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.yes_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 2, "social" : 1, "radicalization" : -2, "crime" : -1})
+                player_history["inflation_decision"] = "yes"
                 self.run_display = False
                 next_play = TwentyfirstPlay(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : -2, "social" : -3, "radicalization" : 2, "crime" : 1})
+                player_history["inflation_decision"] = "no"
                 self.run_display = False
                 next_play = TwentysecondPlay(self.game)
                 next_play.display_play()
@@ -2170,7 +2253,8 @@ class TwentyfirstPlay(Part):
                         for button_selected in self.decision_buttons[group]:
                             if button_selected != button:
                                 self.decision_buttons[group][button_selected].reset_click_button()
-            if self.save_button.check_input(pygame.mouse.get_pos()):                
+            if self.save_button.check_input(pygame.mouse.get_pos()):  
+                player_history["region_subsidies_decision"] = self.decision_data              
                 self.run_display = False
                 next_play = TwentysecondPlay(self.game)
                 next_play.display_play()
@@ -2323,10 +2407,14 @@ class TwentythirdPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.yes_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 1, "social" : 1, "radicalization" : -1, "crime" : -1})
+                player_history["referendum_decision"] = "yes"
                 self.run_display = False
                 next_play = TwentyfourthPlay(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : -1, "social" : -1, "radicalization" : 2, "crime" : 2, "control_system" : 1})
+                player_history["referendum_decision"] = "no"
                 self.run_display = False
                 next_play = TwentyseventhPlay(self.game)
                 next_play.display_play()
@@ -2414,14 +2502,17 @@ class TwentyfourthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.first_button.check_input(pygame.mouse.get_pos()):
+                player_history["campaign_decision"] = "first"
                 self.run_display = False
                 next_play = TwentyfifthPlay(self.game)
                 next_play.display_play()
             if self.second_button.check_input(pygame.mouse.get_pos()):
+                player_history["campaign_decision"] = "second"
                 self.run_display = False
                 next_play = TwentyfifthPlay(self.game)
                 next_play.display_play()
             if self.third_button.check_input(pygame.mouse.get_pos()):
+                player_history["campaign_decision"] = "third"
                 self.run_display = False
                 next_play = TwentyfifthPlay(self.game)
                 next_play.display_play()
@@ -2574,10 +2665,14 @@ class TwentysixthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.yes_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : 1, "social" : -1, "radicalization" : 1, "crime" : 1})
+                player_history["confirm_referendum"] = "yes"
                 self.run_display = False
                 next_play = TwentyseventhPlay(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"economy" : -1, "social" : 1, "radicalization" : 2, "crime" : 2, "control_system" : 1})
+                player_history["confirm_referendum"] = "no"
                 self.run_display = False
                 next_play = TwentyseventhPlay(self.game)
                 next_play.display_play()
@@ -2730,10 +2825,14 @@ class TwentyeighthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.yes_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"diplomacy_alliance" : -1, "social" : 1, "radicalization" : 1, "control_system" : 1})
+                player_history["civil_war_decision"] = "yes"
                 self.run_display = False
                 next_play = TwentyNinethPlay(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"diplomacy_alliance" : 1, "social" : -1, "radicalization" : 2, "control_system" : -3})
+                player_history["civil_war_decision"] = "no"
                 self.run_display = False
                 next_play = ThirtythirdPlay(self.game)
                 next_play.display_play()
@@ -2760,17 +2859,17 @@ class TwentyNinethPlay(Part):
 
         self.state_one = pygame.image.load("../img/paper_blue_button.png")
         self.state_one_hover = pygame.image.load("../img/paper_blue_button_hover.png")
-        self.state_one_button = Button(image=self.state_one, pos=(500, 300), text_input = "A", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_one_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.state_one_button = Button(image=self.state_one, pos=(500, 300), text_input = "Příměří", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_one_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         self.state_two = pygame.image.load("../img/paper_yellow_button.png")
         self.state_two_hover = pygame.image.load("../img/paper_yellow_button_hover.png")
-        self.state_two_button = Button(image=self.state_two, pos=(800, 300), text_input = "B", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_two_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.state_two_button = Button(image=self.state_two, pos=(800, 300), text_input = "Zajmout vůdce", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_two_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         self.state_three = pygame.image.load("../img/paper_red_button.png")
         self.state_three_hover = pygame.image.load("../img/paper_red_button_hover.png")
-        self.state_three_button = Button(image=self.state_three, pos=(1100, 300), text_input = "C", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_three_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.state_three_button = Button(image=self.state_three, pos=(1100, 300), text_input = "Zlikvidovat", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_three_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
 
@@ -2818,14 +2917,20 @@ class TwentyNinethPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.state_one_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"diplomacy_alliance" : 1, "social" : 1, "radicalization" : -3, "control_system" : -2})
+                player_history["civil_war_strategy"] = "state_one"
                 self.run_display = False
                 next_play = ThirtythPlay(self.game)
                 next_play.display_play()
             if self.state_two_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({ "social" : 1, "radicalization" : 1, "control_system" : 1})
+                player_history["civil_war_strategy"] = "state_two"
                 self.run_display = False
                 next_play = ThirtythPlay(self.game)
                 next_play.display_play()
             if self.state_three_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"diplomacy_alliance" : -2, "social" : -2, "radicalization" : 2, "control_system" : 3})
+                player_history["civil_war_strategy"] = "state_three"
                 self.run_display = False
                 next_play = ThirtythPlay(self.game)
                 next_play.display_play()
@@ -2840,10 +2945,10 @@ class ThirtythPlay(Part):
 
         self.first = pygame.image.load("../img/medium_button.png")
         self.first_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.first_button = Button(image=self.first, pos=(1050, 150), text_input = "A", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.second_button = Button(image=self.first, pos=(1050, 300), text_input = "B", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.third_button = Button(image=self.first, pos=(1050, 450), text_input = "C", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.fourth_button = Button(image=self.first, pos=(1050, 600), text_input = "D", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.first_button = Button(image=self.first, pos=(1050, 150), text_input = "Balcar", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.first, pos=(1050, 300), text_input = "Rukzak", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.first, pos=(1050, 450), text_input = "Lidé", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.fourth_button = Button(image=self.first, pos=(1050, 600), text_input = "Aliance", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
@@ -2911,18 +3016,26 @@ class ThirtythPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.first_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"diplomacy_alliance" : -1, "social" : -2, "radicalization" : 2, "control_system" : -2, "crime" : 2, "economy" : 1})
+                player_history["civil_war_supporter"] = "state_one"
                 self.run_display = False
                 next_play = ThirtyfirstPlay(self.game)
                 next_play.display_play()
             if self.second_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"diplomacy_alliance" : -4, "social" : -1, "radicalization" : 3, "control_system" : -2, "crime" : 1, "army" : 1, "diplomacy_enemy" : 3})
+                player_history["civil_war_supporter"] = "state_two"
                 self.run_display = False
                 next_play = ThirtyfirstPlay(self.game)
                 next_play.display_play()
             if self.third_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({ "social" : 3, "radicalization" : -2, "control_system" : 1, "crime" : -1, "economy" : 1})
+                player_history["civil_war_supporter"] = "state_three"
                 self.run_display = False
                 next_play = ThirtyfirstPlay(self.game)
                 next_play.display_play()
             if self.fourth_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"diplomacy_alliance" : 4, "social" : -2, "radicalization" : -3, "control_system" : -5, "crime" : -2, "economy" : 1, "diplomacy_enemy" : -4})
+                player_history["civil_war_supporter"] = "state_four"
                 self.run_display = False
                 next_play = ThirtyfirstPlay(self.game)
                 next_play.display_play()
@@ -3001,10 +3114,14 @@ class ThirtyfirstPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.yes_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"diplomacy_alliance" : -2, "social" : -3, "radicalization" : 4, "control_system" : -2, "economy" : -1})
+                player_history["conflict_with_collaborator"] = "yes"
                 self.run_display = False
                 next_play = ThirtythirdPlay(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"diplomacy_alliance" : 1, "social" : 2, "radicalization" : -2, "control_system" : 2, "economy" : 1})
+                player_history["conflict_with_collaborator"] = "no"
                 self.run_display = False
                 next_play = ThirtysecondPlay(self.game)
                 next_play.display_play()
@@ -3073,7 +3190,7 @@ class ThirtysecondPlay(Part):
             self.state_three_button.update(self.game.screen)
 
             display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
-            display_text_in_box(self.game.screen, 400, 1200, 30, 500, "CO s ním?", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 400, 1200, 30, 500, "Co s ním?", get_font_michroma(50), (240, 240, 240))
 
             self.game.check_events()
             self.check_input()
@@ -3089,14 +3206,20 @@ class ThirtysecondPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.state_one_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"control_system" : -8, "crime" : -1})
+                player_history["conflict_with_collaborator_solution"] = "state_one"
                 self.run_display = False
                 next_play = ThirtythirdPlay(self.game)
                 next_play.display_play()
             if self.state_two_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"crime" : 2, "control_system" : 1})
+                player_history["conflict_with_collaborator_solution"] = "state_two"
                 self.run_display = False
                 next_play = ThirtythirdPlay(self.game)
                 next_play.display_play()
             if self.state_three_button.check_input(pygame.mouse.get_pos()):
+                change_game_variables({"control_system" : 2, "crime" : 4})
+                player_history["conflict_with_collaborator_solution"] = "state_three"
                 self.run_display = False
                 next_play = ThirtythirdPlay(self.game)
                 next_play.display_play()
@@ -3184,11 +3307,7 @@ class ThirtyfourthPlay(Part):
 
         self.yes = pygame.image.load("../img/true_button.png")
         self.yes_hover = pygame.image.load("../img/true_button_hover.png")
-        self.yes_button = Button(image=self.yes, pos=(1050, 450), text_input = "Dobrý", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.yes_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-
-        self.no = pygame.image.load("../img/false_button.png")
-        self.no_hover = pygame.image.load("../img/false_button_hover.png")
-        self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Špatný", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.next_button = Button(image=self.yes, pos=(1050, 450), text_input = "Ukončit", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.yes_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
@@ -3228,13 +3347,11 @@ class ThirtyfourthPlay(Part):
                 self.close_big_map.update(self.game.screen)
 
             display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
-            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Jaký konec", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Jak jsi skončil", get_font_michroma(50), (240, 240, 240))
             display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text2, get_font_michroma(30), (240, 240, 240))
 
-            self.yes_button.change_color(pygame.mouse.get_pos())
-            self.yes_button.update(self.game.screen)
-            self.no_button.change_color(pygame.mouse.get_pos())
-            self.no_button.update(self.game.screen)
+            self.next_button.change_color(pygame.mouse.get_pos())
+            self.next_button.update(self.game.screen)
 
             self.game.check_events()
             self.check_input()
@@ -3248,16 +3365,12 @@ class ThirtyfourthPlay(Part):
                     self.big_map_status = False
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
-            if self.yes_button.check_input(pygame.mouse.get_pos()):
+            if self.next_button.check_input(pygame.mouse.get_pos()):
                 self.run_display = False
-                next_play = GoodEndPlay(self.game)
-                next_play.display_play()
-            if self.no_button.check_input(pygame.mouse.get_pos()):
-                self.run_display = False
-                next_play = BadEndPlay(self.game)
+                next_play = LastPlay(self.game)
                 next_play.display_play()
 
-class GoodEndPlay(Part):
+class LastPlay(Part):
     def __init__(self, game):
         Part.__init__(self, game)
 
@@ -3474,3 +3587,9 @@ def display_text_in_box(screen, start_w: int, end_w: int, start_h: int, end_h: i
             start_w += word_width + space
         start_w = old_w
         start_h += word_height
+
+def play_background_music(file_path):
+    """Funkce pro přehrávání hudby na pozadí, která se bude opakovat"""
+    pygame.mixer.music.load(file_path) 
+    pygame.mixer.music.set_volume(0.6) 
+    pygame.mixer.music.play(-1)       
