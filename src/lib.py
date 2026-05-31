@@ -689,3 +689,19 @@ parties_name_bank = {
     5 : "Strana sociálně aktivních",
     6 : "Náš svět!"
 }
+
+game_variables = {
+    "economy" : 0,
+    "radicalization" : 0,
+    "social" : 0,
+    "control_system" : 0,
+    "crime" : 0,
+    "budget" : 0,
+    "army" : 0,
+    "diplomacy_alliance" : 0,
+    "diplomacy_enemy" : 0,
+}
+
+player_history = {
+    
+}

@@ -1,5 +1,5 @@
 {
-    "party_name": "",
+    "party_name": "Bezejmenná Strana Asociálů",
     "election_data": {
         "education": 1,
         "healthcare": 1,
@@ -28,7 +28,7 @@
         "referendum": 1
     },
     "parties": {
-        "": {
+        "Bezejmenná Strana Asociálů": {
             "data": {
                 "education": 1,
                 "healthcare": 1,
@@ -60,183 +60,183 @@
         },
         "BLOK": {
             "data": {
-                "education": 4,
+                "education": 5,
                 "healthcare": 1,
-                "pensions": 3,
-                "energy": 3,
+                "pensions": 5,
+                "energy": 4,
                 "infrastructure": 5,
-                "defense": 4,
-                "agroculture": 1,
+                "defense": 5,
+                "agroculture": 4,
                 "industry": 1,
-                "startups": 3,
-                "housing": 1,
-                "environment": 4,
-                "culture": 1,
-                "alliance": 2,
+                "startups": 2,
+                "housing": 3,
+                "environment": 2,
+                "culture": 3,
+                "alliance": 3,
                 "small_alliance": 1,
-                "enemy": 1,
-                "migration": 3,
-                "minorities": 2,
-                "human_tax": 1,
-                "corporate_tax": 3,
-                "freedom": 2,
-                "religion": 5,
-                "corruption": 3,
+                "enemy": 2,
+                "migration": 5,
+                "minorities": 4,
+                "human_tax": 2,
+                "corporate_tax": 4,
+                "freedom": 4,
+                "religion": 1,
+                "corruption": 1,
                 "digitization": 5,
-                "debts": 1,
-                "referendum": 3
+                "debts": 2,
+                "referendum": 5
             },
-            "seats": 12
+            "seats": 29
         },
         "ProBudoucnost": {
             "data": {
-                "education": 4,
-                "healthcare": 5,
+                "education": 1,
+                "healthcare": 3,
                 "pensions": 5,
                 "energy": 2,
-                "infrastructure": 2,
-                "defense": 2,
+                "infrastructure": 4,
+                "defense": 5,
                 "agroculture": 4,
-                "industry": 3,
-                "startups": 3,
-                "housing": 3,
-                "environment": 4,
-                "culture": 3,
-                "alliance": 1,
-                "small_alliance": 1,
-                "enemy": 2,
-                "migration": 5,
-                "minorities": 5,
-                "human_tax": 4,
-                "corporate_tax": 4,
-                "freedom": 5,
-                "religion": 4,
-                "corruption": 2,
-                "digitization": 1,
-                "debts": 5,
-                "referendum": 2
-            },
-            "seats": 43
-        },
-        "Strana lidu": {
-            "data": {
-                "education": 4,
-                "healthcare": 4,
-                "pensions": 2,
-                "energy": 4,
-                "infrastructure": 5,
-                "defense": 1,
-                "agroculture": 1,
                 "industry": 2,
-                "startups": 2,
-                "housing": 1,
-                "environment": 1,
+                "startups": 4,
+                "housing": 3,
+                "environment": 3,
                 "culture": 3,
-                "alliance": 1,
-                "small_alliance": 2,
+                "alliance": 4,
+                "small_alliance": 3,
                 "enemy": 4,
-                "migration": 1,
-                "minorities": 4,
-                "human_tax": 3,
-                "corporate_tax": 4,
-                "freedom": 1,
-                "religion": 4,
-                "corruption": 1,
-                "digitization": 4,
+                "migration": 2,
+                "minorities": 2,
+                "human_tax": 2,
+                "corporate_tax": 5,
+                "freedom": 4,
+                "religion": 3,
+                "corruption": 2,
+                "digitization": 3,
                 "debts": 4,
                 "referendum": 5
             },
-            "seats": 5
+            "seats": 29
+        },
+        "Strana lidu": {
+            "data": {
+                "education": 5,
+                "healthcare": 5,
+                "pensions": 4,
+                "energy": 5,
+                "infrastructure": 2,
+                "defense": 2,
+                "agroculture": 1,
+                "industry": 3,
+                "startups": 4,
+                "housing": 4,
+                "environment": 1,
+                "culture": 1,
+                "alliance": 1,
+                "small_alliance": 2,
+                "enemy": 5,
+                "migration": 1,
+                "minorities": 4,
+                "human_tax": 2,
+                "corporate_tax": 1,
+                "freedom": 3,
+                "religion": 2,
+                "corruption": 5,
+                "digitization": 5,
+                "debts": 5,
+                "referendum": 3
+            },
+            "seats": 15
         },
         "Občanská dohoda": {
             "data": {
-                "education": 2,
-                "healthcare": 4,
-                "pensions": 2,
-                "energy": 3,
-                "infrastructure": 5,
-                "defense": 3,
-                "agroculture": 3,
-                "industry": 3,
-                "startups": 4,
-                "housing": 3,
-                "environment": 2,
-                "culture": 4,
-                "alliance": 2,
-                "small_alliance": 2,
-                "enemy": 4,
-                "migration": 1,
-                "minorities": 1,
-                "human_tax": 2,
-                "corporate_tax": 4,
-                "freedom": 2,
-                "religion": 1,
-                "corruption": 5,
-                "digitization": 2,
-                "debts": 5,
-                "referendum": 2
-            },
-            "seats": 13
-        },
-        "Strana sociálně aktivních": {
-            "data": {
                 "education": 5,
-                "healthcare": 1,
-                "pensions": 4,
-                "energy": 4,
-                "infrastructure": 4,
-                "defense": 4,
-                "agroculture": 3,
-                "industry": 4,
-                "startups": 4,
-                "housing": 2,
-                "environment": 1,
-                "culture": 2,
-                "alliance": 2,
-                "small_alliance": 5,
-                "enemy": 4,
-                "migration": 5,
-                "minorities": 2,
-                "human_tax": 1,
-                "corporate_tax": 2,
-                "freedom": 2,
-                "religion": 4,
-                "corruption": 3,
-                "digitization": 1,
-                "debts": 2,
-                "referendum": 3
-            },
-            "seats": 7
-        },
-        "Náš svět!": {
-            "data": {
-                "education": 2,
                 "healthcare": 4,
                 "pensions": 4,
                 "energy": 5,
-                "infrastructure": 5,
+                "infrastructure": 2,
                 "defense": 4,
-                "agroculture": 3,
-                "industry": 4,
-                "startups": 1,
+                "agroculture": 1,
+                "industry": 3,
+                "startups": 2,
                 "housing": 2,
-                "environment": 4,
-                "culture": 4,
-                "alliance": 3,
-                "small_alliance": 5,
-                "enemy": 2,
+                "environment": 2,
+                "culture": 3,
+                "alliance": 5,
+                "small_alliance": 3,
+                "enemy": 4,
                 "migration": 5,
-                "minorities": 2,
-                "human_tax": 4,
+                "minorities": 3,
+                "human_tax": 2,
                 "corporate_tax": 3,
-                "freedom": 1,
-                "religion": 5,
-                "corruption": 2,
+                "freedom": 5,
+                "religion": 2,
+                "corruption": 5,
                 "digitization": 2,
-                "debts": 4,
-                "referendum": 3
+                "debts": 1,
+                "referendum": 4
             },
-            "seats": 20
+            "seats": 25
+        },
+        "Strana sociálně aktivních": {
+            "data": {
+                "education": 2,
+                "healthcare": 2,
+                "pensions": 4,
+                "energy": 3,
+                "infrastructure": 2,
+                "defense": 3,
+                "agroculture": 3,
+                "industry": 3,
+                "startups": 2,
+                "housing": 3,
+                "environment": 3,
+                "culture": 2,
+                "alliance": 1,
+                "small_alliance": 3,
+                "enemy": 3,
+                "migration": 2,
+                "minorities": 3,
+                "human_tax": 3,
+                "corporate_tax": 5,
+                "freedom": 3,
+                "religion": 3,
+                "corruption": 4,
+                "digitization": 2,
+                "debts": 3,
+                "referendum": 1
+            },
+            "seats": 0
+        },
+        "Náš svět!": {
+            "data": {
+                "education": 4,
+                "healthcare": 5,
+                "pensions": 3,
+                "energy": 2,
+                "infrastructure": 1,
+                "defense": 1,
+                "agroculture": 2,
+                "industry": 3,
+                "startups": 2,
+                "housing": 1,
+                "environment": 3,
+                "culture": 4,
+                "alliance": 4,
+                "small_alliance": 4,
+                "enemy": 4,
+                "migration": 3,
+                "minorities": 2,
+                "human_tax": 1,
+                "corporate_tax": 5,
+                "freedom": 4,
+                "religion": 2,
+                "corruption": 3,
+                "digitization": 5,
+                "debts": 5,
+                "referendum": 1
+            },
+            "seats": 1
         }
     },
     "voters": {
@@ -274,7 +274,7 @@
             "compassion": 8,
             "memory": 10,
             "quantity": 300000,
-            "commitment": "ProBudoucnost"
+            "commitment": "Strana lidu"
         },
         "m2": {
             "opinion": {
@@ -310,7 +310,7 @@
             "compassion": 7,
             "memory": 10,
             "quantity": 300000,
-            "commitment": ""
+            "commitment": "Občanská dohoda"
         },
         "m3": {
             "opinion": {
@@ -346,7 +346,7 @@
             "compassion": 9,
             "memory": 9,
             "quantity": 800000,
-            "commitment": false
+            "commitment": "ProBudoucnost"
         },
         "m4": {
             "opinion": {
@@ -382,7 +382,7 @@
             "compassion": 7,
             "memory": 7,
             "quantity": 200000,
-            "commitment": "Občanská dohoda"
+            "commitment": "Bezejmenná Strana Asociálů"
         },
         "m5": {
             "opinion": {
@@ -418,7 +418,7 @@
             "compassion": 8,
             "memory": 7,
             "quantity": 300000,
-            "commitment": "Náš svět!"
+            "commitment": "Občanská dohoda"
         },
         "m6": {
             "opinion": {
@@ -454,7 +454,7 @@
             "compassion": 6,
             "memory": 6,
             "quantity": 400000,
-            "commitment": "ProBudoucnost"
+            "commitment": "Občanská dohoda"
         },
         "m7": {
             "opinion": {
@@ -490,7 +490,7 @@
             "compassion": 8,
             "memory": 5,
             "quantity": 100000,
-            "commitment": "ProBudoucnost"
+            "commitment": "Náš svět!"
         },
         "m8": {
             "opinion": {
@@ -526,7 +526,7 @@
             "compassion": 3,
             "memory": 4,
             "quantity": 300000,
-            "commitment": "Strana lidu"
+            "commitment": "Občanská dohoda"
         },
         "m9": {
             "opinion": {
@@ -598,7 +598,7 @@
             "compassion": 1,
             "memory": 3,
             "quantity": 200000,
-            "commitment": "Strana sociálně aktivních"
+            "commitment": "Bezejmenná Strana Asociálů"
         },
         "s1": {
             "opinion": {
@@ -634,7 +634,7 @@
             "compassion": 9,
             "memory": 9,
             "quantity": 200000,
-            "commitment": "Strana sociálně aktivních"
+            "commitment": "Bezejmenná Strana Asociálů"
         },
         "s2": {
             "opinion": {
@@ -670,7 +670,7 @@
             "compassion": 8,
             "memory": 10,
             "quantity": 400000,
-            "commitment": ""
+            "commitment": false
         },
         "s3": {
             "opinion": {
@@ -706,7 +706,7 @@
             "compassion": 9,
             "memory": 9,
             "quantity": 500000,
-            "commitment": "ProBudoucnost"
+            "commitment": "Strana lidu"
         },
         "s4": {
             "opinion": {
@@ -742,7 +742,7 @@
             "compassion": 6,
             "memory": 8,
             "quantity": 600000,
-            "commitment": ""
+            "commitment": "Bezejmenná Strana Asociálů"
         },
         "s5": {
             "opinion": {
@@ -778,7 +778,7 @@
             "compassion": 7,
             "memory": 7,
             "quantity": 800000,
-            "commitment": "Náš svět!"
+            "commitment": "BLOK"
         },
         "s6": {
             "opinion": {
@@ -814,7 +814,7 @@
             "compassion": 7,
             "memory": 6,
             "quantity": 600000,
-            "commitment": "Občanská dohoda"
+            "commitment": "BLOK"
         },
         "s7": {
             "opinion": {
@@ -850,7 +850,7 @@
             "compassion": 6,
             "memory": 5,
             "quantity": 300000,
-            "commitment": ""
+            "commitment": "ProBudoucnost"
         },
         "s8": {
             "opinion": {
@@ -886,7 +886,7 @@
             "compassion": 4,
             "memory": 5,
             "quantity": 200000,
-            "commitment": ""
+            "commitment": "Bezejmenná Strana Asociálů"
         },
         "s9": {
             "opinion": {
@@ -922,7 +922,7 @@
             "compassion": 5,
             "memory": 3,
             "quantity": 300000,
-            "commitment": ""
+            "commitment": "Bezejmenná Strana Asociálů"
         },
         "s10": {
             "opinion": {
@@ -958,7 +958,7 @@
             "compassion": 2,
             "memory": 2,
             "quantity": 100000,
-            "commitment": "Náš svět!"
+            "commitment": "Občanská dohoda"
         },
         "d1": {
             "opinion": {
@@ -994,7 +994,7 @@
             "compassion": 10,
             "memory": 8,
             "quantity": 300000,
-            "commitment": ""
+            "commitment": "BLOK"
         },
         "d2": {
             "opinion": {
@@ -1066,7 +1066,7 @@
             "compassion": 10,
             "memory": 8,
             "quantity": 300000,
-            "commitment": ""
+            "commitment": "Strana lidu"
         },
         "d4": {
             "opinion": {
@@ -1138,7 +1138,7 @@
             "compassion": 7,
             "memory": 5,
             "quantity": 400000,
-            "commitment": "ProBudoucnost"
+            "commitment": "BLOK"
         },
         "d6": {
             "opinion": {
@@ -1174,7 +1174,7 @@
             "compassion": 8,
             "memory": 4,
             "quantity": 200000,
-            "commitment": "BLOK"
+            "commitment": "Občanská dohoda"
         },
         "d7": {
             "opinion": {
@@ -1210,7 +1210,7 @@
             "compassion": 4,
             "memory": 3,
             "quantity": 200000,
-            "commitment": "BLOK"
+            "commitment": "Občanská dohoda"
         },
         "d8": {
             "opinion": {
@@ -1246,7 +1246,7 @@
             "compassion": 4,
             "memory": 6,
             "quantity": 100000,
-            "commitment": ""
+            "commitment": "ProBudoucnost"
         },
         "d9": {
             "opinion": {
@@ -1282,7 +1282,7 @@
             "compassion": 4,
             "memory": 2,
             "quantity": 300000,
-            "commitment": "BLOK"
+            "commitment": "Bezejmenná Strana Asociálů"
         },
         "d10": {
             "opinion": {
@@ -1318,7 +1318,7 @@
             "compassion": 1,
             "memory": 1,
             "quantity": 400000,
-            "commitment": ""
+            "commitment": "Bezejmenná Strana Asociálů"
         }
     }
 }

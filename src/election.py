@@ -21,6 +21,7 @@ def get_election_result(name: str, data: dict):
 
     get_party_result(name, data)
 
+
     for a in range(1,7):
         party_data = {}
         for one_prefer in prefc:
@@ -93,6 +94,14 @@ def update_seats():
     for party in parties_list:
         seats = seats_list[parties_list.index(party)]
         parties[party]["seats"] = seats
+
+def change_game_variables(requirements: dict):
+    """změna herních proměnných"""
+    game_variables = lib.game_variables
+    for one in requirements:
+        for variable in game_variables:
+            if one == variable:
+                game_variables[variable] += requirements[one]
 
 def get_party_result(name: str, data: dict):
     """výpočet a uložení výsledků pro jednu stranu"""
@@ -189,3 +198,28 @@ def restart_game():
     
     lib.voters.clear()
     lib.voters.update(voters)
+
+def get_variables_election_result(data: dict):
+    """změna herních proměnných na základě preferencí strany"""
+    if data["energy"] + data["infrastructure"] + data["industry"] + data["startups"] >= 16:
+        change_game_variables({"economy" : 1})
+    if data["healthcare"] + data["education"] + data["pensions"] >= 12:
+        change_game_variables({"social" : 1})
+    if data["defense"] == 5:
+        change_game_variables({"army" : 1})
+    if data["alliance"] == 5:
+        change_game_variables({"diplomacy_alliance" : 1})
+    if data["enemy"] == 5:
+        change_game_variables({"diplomacy_enemy" : 1, "diplomacy_alliance" : -1})
+    if data["housing"] + data["culture"] + data["environment"] >= 12:
+        change_game_variables({"social" : 1})
+    if data["migration"] + data["minorities"] <= 3:
+        change_game_variables({"radicalization" : 1})
+    if data["human_tax"] == 10 and data["corporate_tax"] == 8:
+        change_game_variables({"radicalization" : 1})
+    if data["freedom"] == 1:
+        change_game_variables({"radicalization" : 1, "crime" : 1})
+    if data["corruption"] == 1:
+        change_game_variables({"crime" : 1})
+    if data["referendum"] + data["debts"] + data["digitalization"] >= 12:
+        change_game_variables({"economy" : 1, "social" : 1})

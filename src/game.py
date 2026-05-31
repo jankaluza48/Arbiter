@@ -1,8 +1,8 @@
 import pygame
 import json
 from buttons import Button
-from lib import prefc
-from election import get_election_result, restart_game
+from lib import prefc, player_history
+from election import get_election_result, restart_game, change_game_variables
 from lib import parties, voters
 
 """"classy pro jednolivé části hry"""
@@ -339,7 +339,9 @@ class FirstPlay(Part):
                             if button_selected != button:
                                 self.election_buttons[group][button_selected].reset_click_button()
             if self.save_button.check_input(pygame.mouse.get_pos()):
-                
+                self.party_name.strip()
+                if self.party_name == "":
+                    self.party_name = "Bezejmenná Strana Asociálů"
                 get_election_result(self.party_name, self.election_data)
 
                 data = {
@@ -348,6 +350,7 @@ class FirstPlay(Part):
                     "parties" : parties,
                     "voters" : voters
                 }
+                player_history["first_election"] = data
                 with open('../txt/user_data/first_election_data.txt', "w", encoding='utf-8') as file:
                     json.dump(data, file, ensure_ascii=False, indent=4)
                 self.run_display = False
@@ -531,10 +534,14 @@ class ThirdPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.person_one_button.check_input(pygame.mouse.get_pos()):
+                player_history["collaborator"] = "person_one"
+                change_game_variables({"economy" : 1, "diplomacy_alliance" : 1})
                 self.run_display = False
                 next_play = FourthPlay(self.game)
                 next_play.display_play()
             if self.person_two_button.check_input(pygame.mouse.get_pos()):
+                player_history["collaborator"] = "person_two"
+                change_game_variables({"army" : 1, "diplomacy_enemy" : 1})
                 self.run_display = False
                 next_play = FourthPlay(self.game)
                 next_play.display_play()
@@ -620,29 +627,35 @@ class FourthPlay(Part):
             if self.map_button.check_input(pygame.mouse.get_pos()):
                 self.big_map_status = True
             if self.state_one_button.check_input(pygame.mouse.get_pos()):
+                player_history["first_diplomatic_route"] = "lupanar"
+                change_game_variables({"diplomacy_alliance" : 2})
                 self.run_display = False
                 next_play = FifthPlay(self.game)
                 next_play.display_play()
             if self.state_two_button.check_input(pygame.mouse.get_pos()):
+                player_history["first_diplomatic_route"] = "parsko"
+                change_game_variables({"diplomacy_alliance" : 1})
                 self.run_display = False
                 next_play = FifthPlay(self.game)
                 next_play.display_play()
             if self.state_three_button.check_input(pygame.mouse.get_pos()):
+                player_history["first_diplomatic_route"] = "samova_rise"
+                change_game_variables({"diplomacy_enemy" : 1, "diplomacy_alliance" : -1})
                 self.run_display = False
                 next_play = FifthPlay(self.game)
                 next_play.display_play()
 
 class FifthPlay(Part):
-    def __init__(self, game):
+    def __init__(self, game, route):
         Part.__init__(self, game)
 
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
 
-        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
+        with open(f'../txt/first_diplomatic_route_{route}_reaction.txt', encoding='utf-8') as reaction:
             self.reaction = json.load(reaction)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+        with open(f'../txt/first_diplomatic_route_{route}.txt', encoding='utf-8') as text:
             self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -1264,10 +1277,10 @@ class EleventhPlay(Part):
                 self.big_map_status = True
             if self.next_button.check_input(pygame.mouse.get_pos()):
                 self.run_display = False
-                next_play = TwelvethPlay(self.game)
+                next_play = TwelfthPlay(self.game)
                 next_play.display_play()
 
-class TwelvethPlay(Part):
+class TwelfthPlay(Part):
     def __init__(self, game):
         Part.__init__(self, game)
 
@@ -1870,10 +1883,10 @@ class NineteenthPlay(Part):
 
         self.first = pygame.image.load("../img/medium_button.png")
         self.first_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.first_button = Button(image=self.first, pos=(1050, 300), text_input = "A", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.second_button = Button(image=self.first, pos=(1050, 450), text_input = "B", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.third_button = Button(image=self.first, pos=(1050, 600), text_input = "C", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.fourth_button = Button(image=self.first, pos=(1050, 750), text_input = "D", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.first_button = Button(image=self.first, pos=(1050, 150), text_input = "A", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.first, pos=(1050, 300), text_input = "B", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.first, pos=(1050, 450), text_input = "C", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.fourth_button = Button(image=self.first, pos=(1050, 600), text_input = "D", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
@@ -2237,7 +2250,1209 @@ class TwentysecondPlay(Part):
                 next_play.display_play()
 
 class TwentythirdPlay(Part):
-    ...
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        self.yes = pygame.image.load("../img/true_button.png")
+        self.yes_hover = pygame.image.load("../img/true_button_hover.png")
+        self.yes_button = Button(image=self.yes, pos=(1050, 450), text_input = "Bude", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.yes_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.no = pygame.image.load("../img/false_button.png")
+        self.no_hover = pygame.image.load("../img/false_button_hover.png")
+        self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Nebude", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+            self.text2 = json.load(text2)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+            
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Bude referendum?", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text2, get_font_michroma(30), (240, 240, 240))
+
+            self.yes_button.change_color(pygame.mouse.get_pos())
+            self.yes_button.update(self.game.screen)
+            self.no_button.change_color(pygame.mouse.get_pos())
+            self.no_button.update(self.game.screen)
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.yes_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = TwentyfourthPlay(self.game)
+                next_play.display_play()
+            if self.no_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = TwentyseventhPlay(self.game)
+                next_play.display_play()
+
+class TwentyfourthPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+            self.text2 = json.load(text2)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+            
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.first = pygame.image.load("../img/medium_button.png")
+        self.first_hover = pygame.image.load("../img/medium_button_hover.png")
+        self.first_button = Button(image=self.first, pos=(1050, 300), text_input = "A", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.second = pygame.image.load("../img/medium_button.png")
+        self.second_hover = pygame.image.load("../img/medium_button_hover.png")
+        self.second_button = Button(image=self.second, pos=(1050, 450), text_input = "B", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.second_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.third = pygame.image.load("../img/medium_button.png")
+        self.third_hover = pygame.image.load("../img/medium_button_hover.png")
+        self.third_button = Button(image=self.third, pos=(1050, 600), text_input = "C", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.third_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Kampaň", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text2, get_font_michroma(30), (240, 240, 240))
+
+            self.first_button.change_color(pygame.mouse.get_pos())
+            self.first_button.update(self.game.screen)
+
+            self.second_button.change_color(pygame.mouse.get_pos())
+            self.second_button.update(self.game.screen)
+
+            self.third_button.change_color(pygame.mouse.get_pos())
+            self.third_button.update(self.game.screen)
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.first_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = TwentyfifthPlay(self.game)
+                next_play.display_play()
+            if self.second_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = TwentyfifthPlay(self.game)
+                next_play.display_play()
+            if self.third_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = TwentyfifthPlay(self.game)
+                next_play.display_play()
+
+class TwentyfifthPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
+            self.reaction = json.load(reaction)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.next = pygame.image.load("../img/next_button.png")
+        self.next_hover = pygame.image.load("../img/next_button_hover.png")
+        self.next_button = Button(image=self.next, pos=(800, 500), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.next_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.reaction, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Výsledky referenda", get_font_michroma(50), (240, 240, 240))
+            
+            self.next_button.update(self.game.screen)
+            self.next_button.change_color(pygame.mouse.get_pos())
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+
+    def check_input(self):
+        
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.next_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = TwentysixthPlay(self.game)
+                next_play.display_play()
+
+class TwentysixthPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        self.yes = pygame.image.load("../img/true_button.png")
+        self.yes_hover = pygame.image.load("../img/true_button_hover.png")
+        self.yes_button = Button(image=self.yes, pos=(1050, 450), text_input = "Přijmout", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.yes_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.no = pygame.image.load("../img/false_button.png")
+        self.no_hover = pygame.image.load("../img/false_button_hover.png")
+        self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Odmítnout", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+            self.text2 = json.load(text2)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+            
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Schválit referendum", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text2, get_font_michroma(30), (240, 240, 240))
+
+            self.yes_button.change_color(pygame.mouse.get_pos())
+            self.yes_button.update(self.game.screen)
+            self.no_button.change_color(pygame.mouse.get_pos())
+            self.no_button.update(self.game.screen)
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.yes_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = TwentyseventhPlay(self.game)
+                next_play.display_play()
+            if self.no_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = TwentyseventhPlay(self.game)
+                next_play.display_play()
+
+class TwentyseventhPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
+            self.reaction = json.load(reaction)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.next = pygame.image.load("../img/next_button.png")
+        self.next_hover = pygame.image.load("../img/next_button_hover.png")
+        self.next_button = Button(image=self.next, pos=(800, 500), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.next_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.reaction, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Občanská válka", get_font_michroma(50), (240, 240, 240))
+            
+            self.next_button.update(self.game.screen)
+            self.next_button.change_color(pygame.mouse.get_pos())
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+
+    def check_input(self):
+        
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.next_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = TwentyeighthPlay(self.game)
+                next_play.display_play()
+
+class TwentyeighthPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        self.yes = pygame.image.load("../img/true_button.png")
+        self.yes_hover = pygame.image.load("../img/true_button_hover.png")
+        self.yes_button = Button(image=self.yes, pos=(1050, 450), text_input = "Ano", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.yes_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.no = pygame.image.load("../img/false_button.png")
+        self.no_hover = pygame.image.load("../img/false_button_hover.png")
+        self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Ne", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+            self.text2 = json.load(text2)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+            
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Reagovat", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text2, get_font_michroma(30), (240, 240, 240))
+
+            self.yes_button.change_color(pygame.mouse.get_pos())
+            self.yes_button.update(self.game.screen)
+            self.no_button.change_color(pygame.mouse.get_pos())
+            self.no_button.update(self.game.screen)
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.yes_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = TwentyNinethPlay(self.game)
+                next_play.display_play()
+            if self.no_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtythirdPlay(self.game)
+                next_play.display_play()
+
+class TwentyNinethPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+     
+        with open('../txt/first_diplomatic_route.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.state_one = pygame.image.load("../img/paper_blue_button.png")
+        self.state_one_hover = pygame.image.load("../img/paper_blue_button_hover.png")
+        self.state_one_button = Button(image=self.state_one, pos=(500, 300), text_input = "A", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_one_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+        self.state_two = pygame.image.load("../img/paper_yellow_button.png")
+        self.state_two_hover = pygame.image.load("../img/paper_yellow_button_hover.png")
+        self.state_two_button = Button(image=self.state_two, pos=(800, 300), text_input = "B", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_two_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+        self.state_three = pygame.image.load("../img/paper_red_button.png")
+        self.state_three_hover = pygame.image.load("../img/paper_red_button_hover.png")
+        self.state_three_button = Button(image=self.state_three, pos=(1100, 300), text_input = "C", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_three_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            self.state_one_button.change_color(pygame.mouse.get_pos())
+            self.state_one_button.update(self.game.screen)
+            self.state_two_button.change_color(pygame.mouse.get_pos())
+            self.state_two_button.update(self.game.screen)
+            self.state_three_button.change_color(pygame.mouse.get_pos())
+            self.state_three_button.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 400, 1200, 30, 500, "Jak bojovat", get_font_michroma(50), (240, 240, 240))
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.state_one_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtythPlay(self.game)
+                next_play.display_play()
+            if self.state_two_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtythPlay(self.game)
+                next_play.display_play()
+            if self.state_three_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtythPlay(self.game)
+                next_play.display_play()
+
+class ThirtythPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+
+        self.first = pygame.image.load("../img/medium_button.png")
+        self.first_hover = pygame.image.load("../img/medium_button_hover.png")
+        self.first_button = Button(image=self.first, pos=(1050, 150), text_input = "A", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.first, pos=(1050, 300), text_input = "B", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.first, pos=(1050, 450), text_input = "C", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.fourth_button = Button(image=self.first, pos=(1050, 600), text_input = "D", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+            self.text2 = json.load(text2)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+            
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "S kým bojovat", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 1200, 150, height-450, self.text2, get_font_michroma(30), (240, 240, 240))
+
+            self.first_button.change_color(pygame.mouse.get_pos())
+            self.first_button.update(self.game.screen)
+
+            self.second_button.change_color(pygame.mouse.get_pos())
+            self.second_button.update(self.game.screen)
+
+            self.third_button.change_color(pygame.mouse.get_pos())
+            self.third_button.update(self.game.screen)
+
+            self.fourth_button.change_color(pygame.mouse.get_pos())
+            self.fourth_button.update(self.game.screen)
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.first_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtyfirstPlay(self.game)
+                next_play.display_play()
+            if self.second_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtyfirstPlay(self.game)
+                next_play.display_play()
+            if self.third_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtyfirstPlay(self.game)
+                next_play.display_play()
+            if self.fourth_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtyfirstPlay(self.game)
+                next_play.display_play()
+
+class ThirtyfirstPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        self.yes = pygame.image.load("../img/true_button.png")
+        self.yes_hover = pygame.image.load("../img/true_button_hover.png")
+        self.yes_button = Button(image=self.yes, pos=(1050, 450), text_input = "Souhlasit", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.yes_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.no = pygame.image.load("../img/false_button.png")
+        self.no_hover = pygame.image.load("../img/false_button_hover.png")
+        self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Odmítnout", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+            self.text2 = json.load(text2)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+            
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Spor se spolupracovníkem", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text2, get_font_michroma(30), (240, 240, 240))
+
+            self.yes_button.change_color(pygame.mouse.get_pos())
+            self.yes_button.update(self.game.screen)
+            self.no_button.change_color(pygame.mouse.get_pos())
+            self.no_button.update(self.game.screen)
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.yes_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtythirdPlay(self.game)
+                next_play.display_play()
+            if self.no_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtysecondPlay(self.game)
+                next_play.display_play()
+    
+class ThirtysecondPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+     
+        with open('../txt/first_diplomatic_route.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.state_one = pygame.image.load("../img/paper_blue_button.png")
+        self.state_one_hover = pygame.image.load("../img/paper_blue_button_hover.png")
+        self.state_one_button = Button(image=self.state_one, pos=(500, 300), text_input = "A", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_one_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+        self.state_two = pygame.image.load("../img/paper_yellow_button.png")
+        self.state_two_hover = pygame.image.load("../img/paper_yellow_button_hover.png")
+        self.state_two_button = Button(image=self.state_two, pos=(800, 300), text_input = "B", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_two_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+        self.state_three = pygame.image.load("../img/paper_red_button.png")
+        self.state_three_hover = pygame.image.load("../img/paper_red_button_hover.png")
+        self.state_three_button = Button(image=self.state_three, pos=(1100, 300), text_input = "C", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_three_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            self.state_one_button.change_color(pygame.mouse.get_pos())
+            self.state_one_button.update(self.game.screen)
+            self.state_two_button.change_color(pygame.mouse.get_pos())
+            self.state_two_button.update(self.game.screen)
+            self.state_three_button.change_color(pygame.mouse.get_pos())
+            self.state_three_button.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 400, 1200, 30, 500, "CO s ním?", get_font_michroma(50), (240, 240, 240))
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.state_one_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtythirdPlay(self.game)
+                next_play.display_play()
+            if self.state_two_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtythirdPlay(self.game)
+                next_play.display_play()
+            if self.state_three_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtythirdPlay(self.game)
+                next_play.display_play()
+
+class ThirtythirdPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
+            self.reaction = json.load(reaction)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.next = pygame.image.load("../img/next_button.png")
+        self.next_hover = pygame.image.load("../img/next_button_hover.png")
+        self.next_button = Button(image=self.next, pos=(800, 500), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.next_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.reaction, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Poslední pomazání", get_font_michroma(50), (240, 240, 240))
+            
+            self.next_button.update(self.game.screen)
+            self.next_button.change_color(pygame.mouse.get_pos())
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+
+    def check_input(self):
+        
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.next_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = ThirtyfourthPlay(self.game)
+                next_play.display_play()
+
+class ThirtyfourthPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        self.yes = pygame.image.load("../img/true_button.png")
+        self.yes_hover = pygame.image.load("../img/true_button_hover.png")
+        self.yes_button = Button(image=self.yes, pos=(1050, 450), text_input = "Dobrý", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.yes_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.no = pygame.image.load("../img/false_button.png")
+        self.no_hover = pygame.image.load("../img/false_button_hover.png")
+        self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Špatný", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+            self.text2 = json.load(text2)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+            
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Jaký konec", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text2, get_font_michroma(30), (240, 240, 240))
+
+            self.yes_button.change_color(pygame.mouse.get_pos())
+            self.yes_button.update(self.game.screen)
+            self.no_button.change_color(pygame.mouse.get_pos())
+            self.no_button.update(self.game.screen)
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.yes_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = GoodEndPlay(self.game)
+                next_play.display_play()
+            if self.no_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = BadEndPlay(self.game)
+                next_play.display_play()
+
+class GoodEndPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
+            self.reaction = json.load(reaction)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.next = pygame.image.load("../img/next_button.png")
+        self.next_hover = pygame.image.load("../img/next_button_hover.png")
+        self.next_button = Button(image=self.next, pos=(800, 500), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.next_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.reaction, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Svítí", get_font_michroma(50), (240, 240, 240))
+            
+            self.next_button.update(self.game.screen)
+            self.next_button.change_color(pygame.mouse.get_pos())
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+
+    def check_input(self):
+        
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.next_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = EndPlay(self.game)
+                next_play.display_play()
+
+class BadEndPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
+            self.reaction = json.load(reaction)
+
+        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+            self.text = json.load(text)
+
+        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
+            self.data = json.load(data)
+
+        self.small_map = pygame.image.load("../img/map_small_button.png")
+        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.big_map_status = False
+        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
+        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
+        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.next = pygame.image.load("../img/next_button.png")
+        self.next_hover = pygame.image.load("../img/next_button_hover.png")
+        self.next_button = Button(image=self.next, pos=(800, 500), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.next_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            self.map_button.update(self.game.screen)
+            width, height = self.game.screen.get_size()
+            self.par_box = pygame.Rect(0, 250, 350, height-250)
+            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
+            if self.big_map_status:
+                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
+                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+                self.big_map.change_color(pygame.mouse.get_pos())
+                self.big_map.update(self.game.screen)
+
+                self.close_big_map.change_color(pygame.mouse.get_pos())
+                self.close_big_map.update(self.game.screen)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.reaction, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Atentát", get_font_michroma(50), (240, 240, 240))
+            
+            self.next_button.update(self.game.screen)
+            self.next_button.change_color(pygame.mouse.get_pos())
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+
+    def check_input(self):
+        
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.big_map_status:
+                if self.close_big_map.check_input(pygame.mouse.get_pos()):
+                    self.big_map_status = False
+            if self.map_button.check_input(pygame.mouse.get_pos()):
+                self.big_map_status = True
+            if self.next_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = EndPlay(self.game)
+                next_play.display_play()
+
+
+class EndPlay(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        self.yes = pygame.image.load("../img/true_button.png")
+        self.yes_hover = pygame.image.load("../img/true_button_hover.png")
+        self.yes_button = Button(image=self.yes, pos=(1050, 450), text_input = "Hrát znovu", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.yes_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+        self.no = pygame.image.load("../img/false_button.png")
+        self.no_hover = pygame.image.load("../img/false_button_hover.png")
+        self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Do menu", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+
+
+    def display_play(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            width, height = self.game.screen.get_size()
+
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "KONEC", get_font_michroma(50), (240, 240, 240))
+
+            self.yes_button.change_color(pygame.mouse.get_pos())
+            self.yes_button.update(self.game.screen)
+            self.no_button.change_color(pygame.mouse.get_pos())
+            self.no_button.update(self.game.screen)
+
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            if self.yes_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = GoodEndPlay(self.game)
+                next_play.display_play()
+            if self.no_button.check_input(pygame.mouse.get_pos()):
+                self.run_display = False
+                next_play = BadEndPlay(self.game)
+                next_play.display_play() 
 
 def display_text_in_box(screen, start_w: int, end_w: int, start_h: int, end_h: int, text: str, font, color)-> None:
     """Funkce pro zobrazení textu v boxu, který se přizpůsobí velikosti textu a velikosti boxu"""
