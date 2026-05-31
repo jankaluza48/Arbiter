@@ -1,5 +1,6 @@
 import pygame
 import json
+import sys
 from buttons import Button
 from lib import prefc, player_history
 from election import get_election_result, restart_game, change_game_variables
@@ -12,7 +13,6 @@ class Game():
         pygame.init()
         pygame.mixer.init()
 
-        play_background_music("../sound/Arbiter.mp3")
         self.running, self.playing = True, False
 
         self.screen_width, self.screen_height = 1280, 720
@@ -39,6 +39,8 @@ class Game():
             if event.type == pygame.QUIT:
                 self.running, self.playing = False, False
                 self.main_menu.run_display = False
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  
                     self.MOUSE_CLICK_L = True
@@ -144,7 +146,7 @@ def get_font_michroma(size):
 class PreGame(Part):
     def __init__(self, game):
         Part.__init__(self, game)
-
+        play_background_music("../sound/Arbiter.mp3")
         self.game.screen.fill((0,0,0))
 
         self.speed_typing = 6
@@ -256,7 +258,7 @@ class FirstPlay(Part):
         self.save_button_img = pygame.image.load("../img/election_save.png")
         self.save_button_img_hover = pygame.image.load("../img/election_save_hover.png")
         self.save_button = Button(image=self.save_button_img, pos=(self.max_x-150, self.max_y-90), text_input = "Uložit", font = get_font_michroma(40), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.save_button_img_hover, clicked_color="#eaeaea", clicked_image=None, clicked_color_hover="#ffffff", clicked_image_hover=None)
-        with open('../txt/first_election.txt', encoding='utf-8') as text:
+        with open('../txt/text/first_election/first_election.txt', encoding='utf-8') as text:
             self.text = json.load(text)
 
         self.small_map = pygame.image.load("../img/map_small_button.png")
@@ -382,6 +384,19 @@ class SecondPlay(Part):
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
 
+        self.party_name = self.data["party_name"]
+
+        if (
+            self.party_name in self.data["parties"]
+            and self.data["parties"][self.party_name]["seats"] == 101
+        ):
+            with open('../txt/text/first_election/win.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:
+            with open('../txt/text/first_election/lose.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+            
+
         self.small_map = pygame.image.load("../img/map_small_button.png")
         self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
         self.big_map_status = False
@@ -416,8 +431,6 @@ class SecondPlay(Part):
                 self.close_big_map.change_color(pygame.mouse.get_pos())
                 self.close_big_map.update(self.game.screen)
 
-            self.party_name = self.data["party_name"]
-
             if (
                 self.party_name in self.data["parties"]
                 and self.data["parties"][self.party_name]["seats"] == 101
@@ -433,7 +446,7 @@ class SecondPlay(Part):
                 
                 self.new_game_button.update(self.game.screen)
                 self.new_game_button.change_color(pygame.mouse.get_pos())
-
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
             display_text_in_box(self.game.screen, 500, 900, 250, 500, text_text, get_font_michroma(90), text_color)
 
             self.game.check_events()
@@ -557,7 +570,7 @@ class FourthPlay(Part):
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
      
-        with open('../txt/first_diplomatic_route.txt', encoding='utf-8') as text:
+        with open('../txt/text/first_diplomatic_route/first_diplomatic_route.txt', encoding='utf-8') as text:
             self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -657,10 +670,10 @@ class FifthPlay(Part):
 
         route = player_history["first_diplomatic_route"]
 
-        with open(f'../txt/first_diplomatic_route_{route}_reaction.txt', encoding='utf-8') as reaction:
+        with open(f'../txt/text/first_diplomatic_route/first_diplomatic_route_{route}_reaction.txt', encoding='utf-8') as reaction:
             self.reaction = json.load(reaction)
 
-        with open(f'../txt/first_diplomatic_route_{route}.txt', encoding='utf-8') as text:
+        with open(f'../txt/text/first_diplomatic_route/first_diplomatic_route_{route}.txt', encoding='utf-8') as text:
             self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -3444,81 +3457,6 @@ class LastPlay(Part):
                 next_play = EndPlay(self.game)
                 next_play.display_play()
 
-class BadEndPlay(Part):
-    def __init__(self, game):
-        Part.__init__(self, game)
-
-        self.game.screen.fill((0,0,0))
-        self.game.reset_keys()
-
-        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
-            self.reaction = json.load(reaction)
-
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
-
-        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
-            self.data = json.load(data)
-
-        self.small_map = pygame.image.load("../img/map_small_button.png")
-        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.big_map_status = False
-        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
-        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
-        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-
-        self.next = pygame.image.load("../img/next_button.png")
-        self.next_hover = pygame.image.load("../img/next_button_hover.png")
-        self.next_button = Button(image=self.next, pos=(800, 500), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.next_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-
-    def display_play(self):
-        self.run_display = True
-        self.clock = pygame.time.Clock()
-        self.clock.tick(20)
-        
-        while self.run_display:
-            self.game.screen.fill((0,0,0))
-            self.map_button.update(self.game.screen)
-            width, height = self.game.screen.get_size()
-            self.par_box = pygame.Rect(0, 250, 350, height-250)
-            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
-            if self.big_map_status:
-                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
-                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-                self.big_map.change_color(pygame.mouse.get_pos())
-                self.big_map.update(self.game.screen)
-
-                self.close_big_map.change_color(pygame.mouse.get_pos())
-                self.close_big_map.update(self.game.screen)
-
-            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.reaction, get_font_michroma(30), (240, 240, 240))
-            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text, get_font_michroma(30), (240, 240, 240))
-
-            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Atentát", get_font_michroma(50), (240, 240, 240))
-            
-            self.next_button.update(self.game.screen)
-            self.next_button.change_color(pygame.mouse.get_pos())
-
-            self.game.check_events()
-            self.check_input()
-            self.blit_screen()
-
-    def check_input(self):
-        
-        if self.game.ESC:
-            self.run_display = False
-        if self.game.MOUSE_CLICK_L:
-            if self.big_map_status:
-                if self.close_big_map.check_input(pygame.mouse.get_pos()):
-                    self.big_map_status = False
-            if self.map_button.check_input(pygame.mouse.get_pos()):
-                self.big_map_status = True
-            if self.next_button.check_input(pygame.mouse.get_pos()):
-                self.run_display = False
-                next_play = EndPlay(self.game)
-                next_play.display_play()
-
-
 class EndPlay(Part):
     def __init__(self, game):
         Part.__init__(self, game)
@@ -3532,7 +3470,7 @@ class EndPlay(Part):
 
         self.no = pygame.image.load("../img/false_button.png")
         self.no_hover = pygame.image.load("../img/false_button_hover.png")
-        self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Do menu", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Ukončit hru", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
     def display_play(self):
@@ -3560,12 +3498,12 @@ class EndPlay(Part):
         if self.game.MOUSE_CLICK_L:
             if self.yes_button.check_input(pygame.mouse.get_pos()):
                 self.run_display = False
-                next_play = GoodEndPlay(self.game)
+                next_play = PreGame(self.game)
                 next_play.display_play()
             if self.no_button.check_input(pygame.mouse.get_pos()):
-                self.run_display = False
-                next_play = BadEndPlay(self.game)
-                next_play.display_play() 
+                pygame.quit()
+                sys.exit()
+                
 
 def display_text_in_box(screen, start_w: int, end_w: int, start_h: int, end_h: int, text: str, font, color)-> None:
     """Funkce pro zobrazení textu v boxu, který se přizpůsobí velikosti textu a velikosti boxu"""
