@@ -858,15 +858,18 @@ class SixthPlay(Part):
                 self.close_big_map.change_color(pygame.mouse.get_pos())
                 self.close_big_map.update(self.game.screen)
 
-            self.count_text = "Množství zbývajících peněz: "+str(self.count)
-
-            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
-            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Dotace od aliance", get_font_michroma(50), (240, 240, 240))
-            display_text_in_box(self.game.screen, 440, 1200, 130, 500, "Množství zbývajících peněz: 8", get_font_michroma(30), (240, 240, 240))
             for group in self.decision_buttons:
                 for button in self.decision_buttons[group]:
                     self.decision_buttons[group][button].change_color(pygame.mouse.get_pos())
                     self.decision_buttons[group][button].update(self.game.screen)
+
+            self.count = self.old_count
+
+            self.count_text = "Množství zbývajících peněz: "+str(self.count)
+
+            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Dotace od aliance", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 440, 1200, 130, 500, self.count_text, get_font_michroma(30), (240, 240, 240))
             
             for x, y, text in self.decision_labels:
                 display_text_in_box(self.game.screen, x-30, x+250, y-40, y+50, text, get_font_michroma(20), (240, 240, 240))
