@@ -787,6 +787,16 @@ class SixthPlay(Part):
         y = self.start_y 
         self.max_x, self.max_y = self.game.screen.get_size()
 
+        
+        if player_history["first_diplomatic_route"] == "state_one" and player_history["first_diplomatic_route_offer"] == "yes":
+            self.old_count = 12
+        elif player_history["first_diplomatic_route"] == "state_two" and player_history["first_diplomatic_route_offer"] == "yes":
+            self.old_count = 6
+        elif player_history["first_diplomatic_route"] == "state_three" and player_history["first_diplomatic_route_offer"] == "yes":
+            self.old_count = 0
+        else:                
+            self.old_count = 8
+            
         self.prefc = {
             "industry" : "Průmysl",
             "defense" : "Armáda",
@@ -847,6 +857,8 @@ class SixthPlay(Part):
 
                 self.close_big_map.change_color(pygame.mouse.get_pos())
                 self.close_big_map.update(self.game.screen)
+
+            self.count_text = "Množství zbývajících peněz: "+str(self.count)
 
             display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
             display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Dotace od aliance", get_font_michroma(50), (240, 240, 240))
