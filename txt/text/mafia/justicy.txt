@@ -1,0 +1,1 @@
+"Váš kolega je v nebezpečí zatknutí. Hrozí mu vězení a pokud budou u ústavního soudu sedět momentální soudci, tak vrah v sql databázi bude velice rychle přiřazen pod věznici. Pokud ho chcete zachránit, musíte zlikvidovat momentální soudní dvůr a nahradit ho svým."
