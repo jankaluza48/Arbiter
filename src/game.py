@@ -1,3 +1,5 @@
+import random
+
 import pygame
 import json
 import sys
@@ -2068,10 +2070,10 @@ class NineteenthPlay(Part):
 
         self.first = pygame.image.load("../img/medium_button.png")
         self.first_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.first_button = Button(image=self.first, pos=(1050, 150), text_input = "Ubrat peníze", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.second_button = Button(image=self.first, pos=(1050, 300), text_input = "Nechat být", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.third_button = Button(image=self.first, pos=(1050, 450), text_input = "Trochu zvýšit", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.fourth_button = Button(image=self.first, pos=(1050, 600), text_input = "Zvýšit výrazně", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.first_button = Button(image=self.first, pos=(1050, 150), text_input = "Ubrat peníze", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.first, pos=(1050, 300), text_input = "Nechat být", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.first, pos=(1050, 450), text_input = "Trochu zvýšit", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.fourth_button = Button(image=self.first, pos=(1050, 600), text_input = "Zvýšit výrazně", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         if player_history["media_independence"] == "yes":
@@ -2116,7 +2118,7 @@ class NineteenthPlay(Part):
 
             display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
             display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Armáda", get_font_michroma(50), (240, 240, 240))
-            display_text_in_box(self.game.screen, 450, 1200, 150, height-450, self.text2, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-450, self.text2, get_font_michroma(30), (240, 240, 240))
 
             self.first_button.change_color(pygame.mouse.get_pos())
             self.first_button.update(self.game.screen)
@@ -2292,7 +2294,9 @@ class TwentyfirstPlay(Part):
             one_element = {one_prefer : 1}
             self.decision_data.update(one_element)
             buttons = {}
-            buttons.update({1 : Button(image=self.button_1, pos=(x, y), text_input = "1", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.button_1_hover, clicked_color="#eaeaea", clicked_image=self.button_clicked, clicked_color_hover="#ffffff", clicked_image_hover=self.button_clicked_hover)})
+            button_eins = Button(image=self.button_1, pos=(x, y), text_input = "1", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.button_1_hover, clicked_color="#eaeaea", clicked_image=self.button_clicked, clicked_color_hover="#ffffff", clicked_image_hover=self.button_clicked_hover)
+            button_eins.click_button()
+            buttons.update({1 : button_eins})
             buttons.update({2 : Button(image=self.button_2, pos=(x+40, y), text_input = "2", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.button_2_hover, clicked_color="#eaeaea", clicked_image=self.button_clicked, clicked_color_hover="#ffffff", clicked_image_hover=self.button_clicked_hover)})
             buttons.update({3 : Button(image=self.button_3, pos=(x+80, y), text_input = "3", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.button_3_hover, clicked_color="#eaeaea", clicked_image=self.button_clicked, clicked_color_hover="#ffffff", clicked_image_hover=self.button_clicked_hover)})
             self.decision_labels.append((x, y, self.prefc[one_prefer]))
@@ -2304,6 +2308,8 @@ class TwentyfirstPlay(Part):
         self.save_button_img = pygame.image.load("../img/election_save.png")
         self.save_button_img_hover = pygame.image.load("../img/election_save_hover.png")
         self.save_button = Button(image=self.save_button_img, pos=(self.max_x-150, self.max_y-90), text_input = "Potvrdit", font = get_font_michroma(40), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.save_button_img_hover, clicked_color="#eaeaea", clicked_image=None, clicked_color_hover="#ffffff", clicked_image_hover=None)
+
+        self.old_count = 10
 
         if player_history["media_independence"] == "yes":
              with open('../txt/text/war/yes_independence/region_subsidy.txt', encoding='utf-8') as text:
@@ -2344,14 +2350,22 @@ class TwentyfirstPlay(Part):
 
             display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
             display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Dotace regionům", get_font_michroma(50), (240, 240, 240))
-            display_text_in_box(self.game.screen, 440, 1200, 130, 500, "Množství zbývajících peněz: 8", get_font_michroma(30), (240, 240, 240))
+            
             for group in self.decision_buttons:
                 for button in self.decision_buttons[group]:
                     self.decision_buttons[group][button].change_color(pygame.mouse.get_pos())
                     self.decision_buttons[group][button].update(self.game.screen)
+
+            self.count = self.old_count
+            for group in self.decision_data:
+                self.count -= self.decision_data[group]
+
+            self.count_text = "Množství zbývajících peněz: "+str(self.count)
+
+            display_text_in_box(self.game.screen, 440, 1200, 130, 500, self.count_text, get_font_michroma(30), (240, 240, 240))
             
             for x, y, text in self.decision_labels:
-                display_text_in_box(self.game.screen, x-30, x+250, y-40, y+50, text, get_font_michroma(20), (240, 240, 240))
+                display_text_in_box(self.game.screen, x-30, x+450, y-40, y+50, text, get_font_michroma(20), (240, 240, 240))
 
             self.save_button.change_color(pygame.mouse.get_pos())
             self.save_button.update(self.game.screen)
@@ -2378,12 +2392,12 @@ class TwentyfirstPlay(Part):
                         for button_selected in self.decision_buttons[group]:
                             if button_selected != button:
                                 self.decision_buttons[group][button_selected].reset_click_button()
-            if self.save_button.check_input(pygame.mouse.get_pos()):  
-                player_history["region_subsidies_decision"] = self.decision_data              
-                self.run_display = False
-                next_play = TwentysecondPlay(self.game)
-                next_play.display_play()
-
+            if self.save_button.check_input(pygame.mouse.get_pos()):   
+                if self.count >= 0:
+                    player_history["region_subsidies_decision"] = self.decision_data             
+                    self.run_display = False
+                    next_play = TwentysecondPlay(self.game)
+                    next_play.display_play()
 class TwentysecondPlay(Part):
     def __init__(self, game):
         Part.__init__(self, game)
@@ -2477,11 +2491,14 @@ class TwentythirdPlay(Part):
         self.no_hover = pygame.image.load("../img/false_button_hover.png")
         self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Nebude", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
+        if player_history["media_independence"] == "yes":
+            with open('../txt/text/war/yes_independence/referendum.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:
+            with open('../txt/text/war/no_independence/referendum.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
-
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+        with open('../txt/text/war/referendum.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -2555,11 +2572,8 @@ class TwentyfourthPlay(Part):
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+        with open('../txt/text/war/campaign.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
-
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
@@ -2573,15 +2587,15 @@ class TwentyfourthPlay(Part):
 
         self.first = pygame.image.load("../img/medium_button.png")
         self.first_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.first_button = Button(image=self.first, pos=(1050, 300), text_input = "A", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.first_button = Button(image=self.first, pos=(1050, 300), text_input = "Pro vystoupení", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         self.second = pygame.image.load("../img/medium_button.png")
         self.second_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.second_button = Button(image=self.second, pos=(1050, 450), text_input = "B", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.second_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.second, pos=(1050, 450), text_input = "Neutralita", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.second_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
         self.third = pygame.image.load("../img/medium_button.png")
         self.third_hover = pygame.image.load("../img/medium_button_hover.png")
-        self.third_button = Button(image=self.third, pos=(1050, 600), text_input = "C", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.third_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.third, pos=(1050, 600), text_input = "Pro zůstání", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.third_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
     def display_play(self):
@@ -2604,7 +2618,6 @@ class TwentyfourthPlay(Part):
                 self.close_big_map.change_color(pygame.mouse.get_pos())
                 self.close_big_map.update(self.game.screen)
 
-            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
             display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Kampaň", get_font_michroma(50), (240, 240, 240))
             display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text2, get_font_michroma(30), (240, 240, 240))
 
@@ -2652,12 +2665,32 @@ class TwentyfifthPlay(Part):
 
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
+        
+        results = ["yes", "no"]
 
-        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
-            self.reaction = json.load(reaction)
+        result = random.choices(results, weights=(0.4, 0.6), k=1)[0]
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
+        if player_history["campaign_decision"] == "first":
+            if result == "yes":
+                change_game_variables({"economy" : 2, "social" : 1, "radicalization" : -2, "crime" : -1})
+                player_history["referundum_result"] = "win"
+            else:
+                change_game_variables({"economy" : -2, "social" : -3, "radicalization" : 2, "crime" : 1})
+                player_history["referundum_result"] = "lose"
+        else:
+            if result == "yes":
+                change_game_variables({"economy" : -1, "social" : -1, "radicalization" : 1, "crime" : 1})
+                player_history["referundum_result"] = "lose"
+            else:
+                change_game_variables({"economy" : 1, "social" : 1, "radicalization" : -1, "crime" : -1})
+                player_history["referundum_result"] = "win"
+
+        if result == "yes":
+            with open('../txt/text/war/referendum_results_yes.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:
+            with open('../txt/text/war/referendum_results_no.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
@@ -2693,7 +2726,6 @@ class TwentyfifthPlay(Part):
                 self.close_big_map.change_color(pygame.mouse.get_pos())
                 self.close_big_map.update(self.game.screen)
 
-            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.reaction, get_font_michroma(30), (240, 240, 240))
             display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text, get_font_michroma(30), (240, 240, 240))
 
             display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Výsledky referenda", get_font_michroma(50), (240, 240, 240))
@@ -2736,11 +2768,24 @@ class TwentysixthPlay(Part):
         self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Odmítnout", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
-
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
-            self.text2 = json.load(text2)
+        if player_history["referundum_result"] == "win":
+            with open('../txt/text/war/result_confirm_yes.txt', encoding='utf-8') as text2:
+                self.text2 = json.load(text2)
+            if player_history["media_independence"] == "yes":
+                with open('../txt/text/war/yes_independence/result_confirm_yes.txt', encoding='utf-8') as text:
+                    self.text = json.load(text)
+            else:
+                 with open('../txt/text/war/no_independence/result_confirm.txt', encoding='utf-8') as text:
+                    self.text = json.load(text)
+        else:
+            with open('../txt/text/war/result_confirm_no.txt', encoding='utf-8') as text2:
+                self.text2 = json.load(text2)
+            if player_history["media_independence"] == "yes":
+                with open('../txt/text/war/yes_independence/result_confirm_no.txt', encoding='utf-8') as text:
+                    self.text = json.load(text)
+            else:
+                 with open('../txt/text/war/no_independence/result_confirm.txt', encoding='utf-8') as text:
+                    self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
@@ -2813,10 +2858,7 @@ class TwentyseventhPlay(Part):
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
 
-        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
-            self.reaction = json.load(reaction)
-
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+        with open('../txt/text/civil_war/start.txt', encoding='utf-8') as text:
             self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -2853,7 +2895,6 @@ class TwentyseventhPlay(Part):
                 self.close_big_map.change_color(pygame.mouse.get_pos())
                 self.close_big_map.update(self.game.screen)
 
-            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.reaction, get_font_michroma(30), (240, 240, 240))
             display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text, get_font_michroma(30), (240, 240, 240))
 
             display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Občanská válka", get_font_michroma(50), (240, 240, 240))
@@ -2896,10 +2937,14 @@ class TwentyeighthPlay(Part):
         self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Ne", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
+        if player_history["media_independence"] == "yes":
+            with open('../txt/text/civil_war/yes_independence/reaction.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:  
+            with open('../txt/text/civil_war/no_independence/reaction.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+        with open('../txt/text/civil_war/reaction.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -2972,9 +3017,13 @@ class TwentyNinethPlay(Part):
 
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
-     
-        with open('../txt/first_diplomatic_route.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
+
+        if player_history["media_independence"] == "yes":
+            with open('../txt/text/civil_war/yes_independence/how.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:  
+            with open('../txt/text/civil_war/no_independence/how.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
@@ -3079,11 +3128,15 @@ class ThirtythPlay(Part):
         self.third_button = Button(image=self.first, pos=(1050, 450), text_input = "Lidé", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
         self.fourth_button = Button(image=self.first, pos=(1050, 600), text_input = "Aliance", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
-            self.text2 = json.load(text2)
+        if player_history["media_independence"] == "yes":
+            with open('../txt/text/civil_war/yes_independence/with.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:
+            with open('../txt/text/civil_war/no_independence/with.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
+        with open('../txt/text/civil_war/with.txt', encoding='utf-8') as text2:
+            self.text2 = json.load(text2)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
@@ -3184,12 +3237,19 @@ class ThirtyfirstPlay(Part):
         self.no_hover = pygame.image.load("../img/false_button_hover.png")
         self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Odmítnout", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
+        if player_history["media_independence"] == "yes":
+            with open('../txt/text/civil_war/yes_independence/collaborator.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:
+            with open('../txt/text/civil_war/no_independence/collaborator.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
-
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
-            self.text2 = json.load(text2)
+        if player_history["collaborator"] == "person_one":
+            with open('../txt/text/civil_war/collaborator_balcar.txt', encoding='utf-8') as text2:
+                self.text2 = json.load(text2)
+        else:
+            with open('../txt/text/civil_war/collaborator_rukzak.txt', encoding='utf-8') as text2:
+                self.text2 = json.load(text2)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
@@ -3262,7 +3322,7 @@ class ThirtysecondPlay(Part):
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
      
-        with open('../txt/first_diplomatic_route.txt', encoding='utf-8') as text:
+        with open('../txt/text/civil_war/collaborator_solution.txt', encoding='utf-8') as text:
             self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
