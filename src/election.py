@@ -1,5 +1,5 @@
 import random
-import lib
+import lib 
 import json
 
 """modul pro výpočet výsledků voleb"""

@@ -1886,10 +1886,14 @@ class SeventeenthPlay(Part):
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
 
-        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
-            self.reaction = json.load(reaction)
+        if player_history["media_independence"] == "yes":
+            with open('../txt/text/war/yes_independence/start.txt', encoding='utf-8') as reaction:
+                self.reaction = json.load(reaction)
+        else:
+            with open('../txt/text/war/no_independence/start.txt', encoding='utf-8') as reaction:
+                self.reaction = json.load(reaction)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+        with open('../txt/text/war/start.txt', encoding='utf-8') as text:
             self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -1968,11 +1972,16 @@ class EighteenthPlay(Part):
 
         self.third_button = Button(image=self.first, pos=(1100, 600), text_input = "Uzavřít hranice", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
-            self.text2 = json.load(text2)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
+        if player_history["media_independence"] == "yes":
+            with open('../txt/text/war/yes_independence/migration.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:  
+            with open('../txt/text/war/no_independence/migration.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+
+        with open('../txt/migration.txt', encoding='utf-8') as text2:
+            self.text2 = json.load(text2)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
@@ -2064,11 +2073,16 @@ class NineteenthPlay(Part):
         self.third_button = Button(image=self.first, pos=(1050, 450), text_input = "Trochu zvýšit", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
         self.fourth_button = Button(image=self.first, pos=(1050, 600), text_input = "Zvýšit výrazně", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
-            self.text2 = json.load(text2)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
+        if player_history["media_independence"] == "yes":
+            with open('../txt/text/war/yes_independence/army.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:  
+            with open('../txt/text/war/no_independence/army.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+
+        with open('../txt/army.txt', encoding='utf-8') as text2:
+            self.text2 = json.load(text2)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
@@ -2169,11 +2183,14 @@ class TwentiethPlay(Part):
         self.no_hover = pygame.image.load("../img/false_button_hover.png")
         self.no_button = Button(image=self.no, pos=(1050, 600), text_input = "Nepomoct", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.no_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
+        if player_history["media_independence"] == "yes":
+            with open('../txt/text/war/yes_independence/inflation.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:  
+            with open('../txt/text/war/no_independence/inflation.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
-
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
+        with open('../txt/inflation.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -2288,9 +2305,12 @@ class TwentyfirstPlay(Part):
         self.save_button_img_hover = pygame.image.load("../img/election_save_hover.png")
         self.save_button = Button(image=self.save_button_img, pos=(self.max_x-150, self.max_y-90), text_input = "Potvrdit", font = get_font_michroma(40), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.save_button_img_hover, clicked_color="#eaeaea", clicked_image=None, clicked_color_hover="#ffffff", clicked_image_hover=None)
 
-
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
+        if player_history["media_independence"] == "yes":
+             with open('../txt/text/war/yes_independence/region_subsidy.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
+        else:
+            with open('../txt/text/war/no_independence/region_subsidy.txt', encoding='utf-8') as text:
+                self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
@@ -3330,6 +3350,7 @@ class ThirtysecondPlay(Part):
                 next_play.display_play()
 
 class ThirtythirdPlay(Part):
+    """toto dela hovno, ale nevim jak to opravit, protoze se tam musi dat spousta veci a uz se mi nechce to delat, takze to necham takhle, at uz je to venku"""
     def __init__(self, game):
         Part.__init__(self, game)
 
