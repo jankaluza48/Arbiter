@@ -1980,7 +1980,7 @@ class EighteenthPlay(Part):
             with open('../txt/text/war/no_independence/migration.txt', encoding='utf-8') as text:
                 self.text = json.load(text)
 
-        with open('../txt/migration.txt', encoding='utf-8') as text2:
+        with open('../txt/text/war/migration.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -2081,7 +2081,7 @@ class NineteenthPlay(Part):
             with open('../txt/text/war/no_independence/army.txt', encoding='utf-8') as text:
                 self.text = json.load(text)
 
-        with open('../txt/army.txt', encoding='utf-8') as text2:
+        with open('../txt/text/war/army.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -2190,7 +2190,7 @@ class TwentiethPlay(Part):
             with open('../txt/text/war/no_independence/inflation.txt', encoding='utf-8') as text:
                 self.text = json.load(text)
 
-        with open('../txt/inflation.txt', encoding='utf-8') as text2:
+        with open('../txt/text/war/inflation.txt', encoding='utf-8') as text2:
             self.text2 = json.load(text2)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -2391,10 +2391,14 @@ class TwentysecondPlay(Part):
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
 
-        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
-            self.reaction = json.load(reaction)
+        if player_history["media_independence"] == "yes":
+            with open('../txt/text/war/yes_independence/alliance_problems.txt', encoding='utf-8') as reaction:
+                self.reaction = json.load(reaction)
+        else:  
+            with open('../txt/text/war/no_independence/alliance_problems.txt', encoding='utf-8') as reaction:
+                self.reaction = json.load(reaction)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+        with open('../txt/text/war/alliance_problems.txt', encoding='utf-8') as text:
             self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
