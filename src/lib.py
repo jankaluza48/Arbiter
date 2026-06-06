@@ -703,5 +703,4 @@ game_variables = {
 }
 
 player_history = {
-    
 }

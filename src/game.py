@@ -5,7 +5,7 @@ import json
 import sys
 from buttons import Button
 from lib import prefc, player_history
-from election import get_election_result, restart_game, change_game_variables
+from election import get_election_result, restart_game, change_game_variables, get_variables_regions, get_variables_subsidy
 from lib import parties, voters
 
 """"classy pro jednolivé části hry"""
@@ -928,7 +928,8 @@ class SixthPlay(Part):
                                 self.decision_buttons[group][button_selected].reset_click_button()
             if self.save_button.check_input(pygame.mouse.get_pos()):   
                 if self.count >= 0:
-                    player_history["alliance_subsidy"] = self.decision_data             
+                    player_history["alliance_subsidy"] = self.decision_data 
+                    get_variables_subsidy(self.decision_data)            
                     self.run_display = False
                     next_play = SeventhPlay(self.game)
                     next_play.display_play()
@@ -1581,17 +1582,17 @@ class FourteenthPlay(Part):
 
         self.first = pygame.image.load("../img/paper_blue_button.png")
         self.first_hover = pygame.image.load("../img/paper_blue_button_hover.png")
-        self.first_button = Button(image=self.first, pos=(500, 600), text_input = "Nechat být", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.first_button = Button(image=self.first, pos=(500, 600), text_input = "Nechat být", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         self.second = pygame.image.load("../img/paper_yellow_button.png")
         self.second_hover = pygame.image.load("../img/paper_yellow_button_hover.png")
-        self.second_button = Button(image=self.second, pos=(800, 600), text_input = "Kritizovat", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.second_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.second, pos=(800, 600), text_input = "Kritizovat", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.second_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         self.third = pygame.image.load("../img/paper_red_button.png")
         self.third_hover = pygame.image.load("../img/paper_red_button_hover.png")
-        self.third_button = Button(image=self.third, pos=(1100, 600), text_input = "Zlikvidovat", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.third_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.third, pos=(1100, 600), text_input = "Zlikvidovat", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.third_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
         if player_history["media_independence"] == "yes":
             with open('../txt/text/mafia/yes_independence/demonstration.txt', encoding='utf-8') as text:
                 self.text = json.load(text)
@@ -1968,11 +1969,11 @@ class EighteenthPlay(Part):
         self.first = pygame.image.load("../img/paper_red_button.png")
         self.first_hover = pygame.image.load("../img/paper_red_button_hover.png")
 
-        self.first_button = Button(image=self.first, pos=(500, 600), text_input = "Přijmout", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.first_button = Button(image=self.first, pos=(500, 600), text_input = "Přijmout", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
-        self.second_button = Button(image=self.first, pos=(800, 600), text_input = "Kritizovat", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.second_button = Button(image=self.first, pos=(800, 600), text_input = "Kritizovat", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
-        self.third_button = Button(image=self.first, pos=(1100, 600), text_input = "Uzavřít hranice", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.third_button = Button(image=self.first, pos=(1100, 600), text_input = "Uzavřít hranice", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.first_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         if player_history["media_independence"] == "yes":
@@ -2394,7 +2395,8 @@ class TwentyfirstPlay(Part):
                                 self.decision_buttons[group][button_selected].reset_click_button()
             if self.save_button.check_input(pygame.mouse.get_pos()):   
                 if self.count >= 0:
-                    player_history["region_subsidies_decision"] = self.decision_data             
+                    player_history["region_subsidies_decision"] = self.decision_data  
+                    get_variables_regions(self.decision_data)           
                     self.run_display = False
                     next_play = TwentysecondPlay(self.game)
                     next_play.display_play()
@@ -3037,17 +3039,17 @@ class TwentyNinethPlay(Part):
 
         self.state_one = pygame.image.load("../img/paper_blue_button.png")
         self.state_one_hover = pygame.image.load("../img/paper_blue_button_hover.png")
-        self.state_one_button = Button(image=self.state_one, pos=(500, 300), text_input = "Příměří", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_one_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.state_one_button = Button(image=self.state_one, pos=(500, 300), text_input = "Příměří", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_one_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         self.state_two = pygame.image.load("../img/paper_yellow_button.png")
         self.state_two_hover = pygame.image.load("../img/paper_yellow_button_hover.png")
-        self.state_two_button = Button(image=self.state_two, pos=(800, 300), text_input = "Zajmout vůdce", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_two_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.state_two_button = Button(image=self.state_two, pos=(800, 300), text_input = "Zajmout vůdce", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_two_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         self.state_three = pygame.image.load("../img/paper_red_button.png")
         self.state_three_hover = pygame.image.load("../img/paper_red_button_hover.png")
-        self.state_three_button = Button(image=self.state_three, pos=(1100, 300), text_input = "Zlikvidovat", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_three_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.state_three_button = Button(image=self.state_three, pos=(1100, 300), text_input = "Zlikvidovat", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_three_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
 
@@ -3170,7 +3172,7 @@ class ThirtythPlay(Part):
 
             display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
             display_text_in_box(self.game.screen, 430, 1200, 60, 500, "S kým bojovat", get_font_michroma(50), (240, 240, 240))
-            display_text_in_box(self.game.screen, 450, 1200, 150, height-450, self.text2, get_font_michroma(30), (240, 240, 240))
+            display_text_in_box(self.game.screen, 450, 900, 150, height-450, self.text2, get_font_michroma(30), (240, 240, 240))
 
             self.first_button.change_color(pygame.mouse.get_pos())
             self.first_button.update(self.game.screen)
@@ -3337,17 +3339,17 @@ class ThirtysecondPlay(Part):
 
         self.state_one = pygame.image.load("../img/paper_blue_button.png")
         self.state_one_hover = pygame.image.load("../img/paper_blue_button_hover.png")
-        self.state_one_button = Button(image=self.state_one, pos=(500, 300), text_input = "A", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_one_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.state_one_button = Button(image=self.state_one, pos=(500, 300), text_input = "Předat vládu", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_one_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         self.state_two = pygame.image.load("../img/paper_yellow_button.png")
         self.state_two_hover = pygame.image.load("../img/paper_yellow_button_hover.png")
-        self.state_two_button = Button(image=self.state_two, pos=(800, 300), text_input = "B", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_two_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.state_two_button = Button(image=self.state_two, pos=(800, 300), text_input = "Vyhodit", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_two_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
         self.state_three = pygame.image.load("../img/paper_red_button.png")
         self.state_three_hover = pygame.image.load("../img/paper_red_button_hover.png")
-        self.state_three_button = Button(image=self.state_three, pos=(1100, 300), text_input = "C", font = get_font_michroma(20), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_three_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
+        self.state_three_button = Button(image=self.state_three, pos=(1100, 300), text_input = "Zastřelit", font = get_font_michroma(25), base_color = "#1c1c1c", hover_color = "#282828", hover_image=self.state_three_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
 
@@ -3414,7 +3416,6 @@ class ThirtysecondPlay(Part):
                 next_play.display_play()
 
 class ThirtythirdPlay(Part):
-    """toto dela hovno, ale nevim jak to opravit, protoze se tam musi dat spousta veci a uz se mi nechce to delat, takze to necham takhle, at uz je to venku"""
     def __init__(self, game):
         Part.__init__(self, game)
 
@@ -3547,80 +3548,6 @@ class ThirtyfourthPlay(Part):
             self.check_input()
             self.blit_screen()
     def check_input(self):
-        if self.game.ESC:
-            self.run_display = False
-        if self.game.MOUSE_CLICK_L:
-            if self.big_map_status:
-                if self.close_big_map.check_input(pygame.mouse.get_pos()):
-                    self.big_map_status = False
-            if self.map_button.check_input(pygame.mouse.get_pos()):
-                self.big_map_status = True
-            if self.next_button.check_input(pygame.mouse.get_pos()):
-                self.run_display = False
-                next_play = LastPlay(self.game)
-                next_play.display_play()
-
-class LastPlay(Part):
-    def __init__(self, game):
-        Part.__init__(self, game)
-
-        self.game.screen.fill((0,0,0))
-        self.game.reset_keys()
-
-        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
-            self.reaction = json.load(reaction)
-
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
-
-        with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
-            self.data = json.load(data)
-
-        self.small_map = pygame.image.load("../img/map_small_button.png")
-        self.map_button = Button(image=self.small_map, pos=(175, 125), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-        self.big_map_status = False
-        self.big_map_picture_og = pygame.image.load("../img/map_big.jpg")
-        self.close_big_map_picture = pygame.image.load("../img/close_map_big.jpg")
-        self.close_big_map = Button(image=self.close_big_map_picture, pos=(55, 55), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-
-        self.next = pygame.image.load("../img/next_button.png")
-        self.next_hover = pygame.image.load("../img/next_button_hover.png")
-        self.next_button = Button(image=self.next, pos=(800, 500), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.next_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-
-    def display_play(self):
-        self.run_display = True
-        self.clock = pygame.time.Clock()
-        self.clock.tick(20)
-        
-        while self.run_display:
-            self.game.screen.fill((0,0,0))
-            self.map_button.update(self.game.screen)
-            width, height = self.game.screen.get_size()
-            self.par_box = pygame.Rect(0, 250, 350, height-250)
-            pygame.draw.rect(self.game.screen, (240, 240, 240), self.par_box, 3) 
-            if self.big_map_status:
-                self.big_map_picture = pygame.transform.smoothscale(self.big_map_picture_og, (width, height))
-                self.big_map = Button(image=self.big_map_picture, pos=(width // 2, height // 2), text_input = None, font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=None, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
-                self.big_map.change_color(pygame.mouse.get_pos())
-                self.big_map.update(self.game.screen)
-
-                self.close_big_map.change_color(pygame.mouse.get_pos())
-                self.close_big_map.update(self.game.screen)
-
-            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.reaction, get_font_michroma(30), (240, 240, 240))
-            display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text, get_font_michroma(30), (240, 240, 240))
-
-            display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Svítí", get_font_michroma(50), (240, 240, 240))
-            
-            self.next_button.update(self.game.screen)
-            self.next_button.change_color(pygame.mouse.get_pos())
-
-            self.game.check_events()
-            self.check_input()
-            self.blit_screen()
-
-    def check_input(self):
-        
         if self.game.ESC:
             self.run_display = False
         if self.game.MOUSE_CLICK_L:

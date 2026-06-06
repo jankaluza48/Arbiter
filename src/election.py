@@ -223,3 +223,32 @@ def get_variables_election_result(data: dict):
         change_game_variables({"crime" : 1})
     if data["referendum"] + data["debts"] + data["digitalization"] >= 12:
         change_game_variables({"economy" : 1, "social" : 1})
+
+def get_variables_subsidy(data: dict):
+    """změna herních proměnných na základě velikostí dotací pro jednotlivé obory"""
+    if data["industry"] >= 2:
+        change_game_variables({"economy" : 2, "social" : 1})
+    if data["defense"] == 1:
+        change_game_variables({"army" : -1, "diplomacy_alliance" : -2})
+    if data["defense"] == 2:
+        change_game_variables({"economy" : 1, "army" : 2, "diplomacy_alliance" : 1})
+    if data["defense"] == 3:
+        change_game_variables({"diplomacy_alliance" : 2, "army" : 3, "economy" : 1, "radicalization" : 1})
+    if data["infrastructure"] >= 2:
+        change_game_variables({"economy" : 1, "army" : 1})
+    if data["housing"] >= 2:
+        change_game_variables({"social" : 1, "radicalization" : -1})
+    if data["healthcare"] >= 2:
+        change_game_variables({"social" : 1, "radicalization" : -1})
+
+def get_variables_regions(data: dict):
+    """změna herních proměnných na základě dotací pro jednotlivé regiony"""
+    if data["tutus"] >= 2:
+        change_game_variables({"diplomacy_alliance" : 1, "economy" : 1, "radicalization" : 1})
+    if data["foramen"] >= 2:
+        change_game_variables({"economy" : 1, "diplomacy_alliance" : 1})
+    if data["parvus"] >= 2:
+        change_game_variables({"economy" : -1, "radicalization" : -1})
+    if data["altus"] >= 2:
+        change_game_variables({"economy" : 1, "radicalization" : 2})
+
