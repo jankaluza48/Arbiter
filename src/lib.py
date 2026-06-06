@@ -701,6 +701,57 @@ game_variables = {
     "diplomacy_enemy" : 0,
 }
 
+game_variables_texts = {
+    "economy" : {
+        "title" : "Ekonomika",
+        "1" : "zhoršení ekonomické situace",
+        "2" : "příznivá ekonomická situace",
+        "3" : "výrazné zlepšení ekonomické situace"
+    },
+    "radicalization" : {
+        "title" : "Radikalizace",
+        "1" : "nízká míra radikalizace",
+        "2" : "střední míra radikalizace",
+        "3" : "vysoká míra radikalizace"
+    },
+    "social" : {
+        "title" : "Oblíbenost",
+        "1" : "neoblíbenost",
+        "2" : "střední oblíbenost",
+        "3" : "oblíbenost"
+    },
+    "control_system" : {
+        "title" : "Kontrola systému",
+        "1" : "nízká",
+        "2" : "střední",
+        "3" : "vysoká"
+    },
+    "crime" : {
+        "title" : "Trestná činnost",
+        "1" : "bez prohrešků",
+        "2" : "průměrná míra trestné činnosti",
+        "3" : "mafiánské praktiky"
+    },
+    "army" : {
+        "title" : "Armáda",
+        "1" : "slabá armáda",
+        "2" : "průměrná armáda",
+        "3" : "silná armáda"
+    },
+    "diplomacy_alliance" : {
+        "title" : "Vztahy s aliancí",
+        "1" : "nepříznivé",
+        "2" : "neutrální",
+        "3" : "příznivé"
+    },
+    "diplomacy_enemy" : {
+        "title" : "Vztahy s nepřítelem",
+        "1" : "nepříznivé",
+        "2" : "neutrální",
+        "3" : "příznivé"
+    }
+}
+
 player_history = {
 }
 

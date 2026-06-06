@@ -5,7 +5,7 @@ import json
 import sys
 from buttons import Button
 from lib import prefc, player_history, game_variables, parties, voters, setting
-from election import get_election_result, restart_game, change_game_variables, get_variables_regions, get_variables_subsidy, update_setting, display_text_in_box, play_background_music, stop_background_music
+from election import get_election_result, restart_game, change_game_variables, get_variables_regions, get_variables_subsidy, update_setting, display_text_in_box, play_background_music, stop_background_music, get_final_result
 
 """"classy pro jednolivé části hry"""
 
@@ -3509,7 +3509,7 @@ class ThirtythirdPlay(Part):
                 if player_history["conflict_with_collaborator_solution"] == "state_one":
                     text_path = '../txt/text/ends/collaborator_betrayer.txt'
                 else:
-                    if game_variables["army"] >= 5:
+                    if game_variables["army"] * round(random.uniform(0.80, 1.00), 2) >= 5:
                         text_path = '../txt/text/ends/good_army.txt'
                     else:
                         text_path = '../txt/text/ends/bad_army.txt'
@@ -3519,7 +3519,7 @@ class ThirtythirdPlay(Part):
             if player_history["media_independence"] == "yes":
                 text_path = '../txt/text/ends/no_reaction_yes_liberty.txt'
             else:
-                if game_variables["radicalization"] >= 10:
+                if game_variables["radicalization"] * round(random.uniform(0.80, 1.00), 2) >= 10:
                     text_path = '../txt/text/ends/no_reaction_no_liberty_sad.txt'
                 else:
                     text_path = '../txt/text/ends/no_reaction_no_liberty_happy.txt'
@@ -3600,11 +3600,9 @@ class ThirtyfourthPlay(Part):
         self.next_button = Button(image=self.yes, pos=(1050, 450), text_input = "Ukončit", font = get_font_michroma(50), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.yes_hover, clicked_color=None, clicked_image=None, clicked_color_hover=None, clicked_image_hover=None)
 
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
-            self.text = json.load(text)
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text2:
-            self.text2 = json.load(text2)
+
+        self.text2 = get_final_result()
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
             self.data = json.load(data)
@@ -3636,7 +3634,6 @@ class ThirtyfourthPlay(Part):
                 self.close_big_map.change_color(pygame.mouse.get_pos())
                 self.close_big_map.update(self.game.screen)
 
-            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.text, get_font_michroma(30), (240, 240, 240))
             display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Jak jsi skončil", get_font_michroma(50), (240, 240, 240))
             display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text2, get_font_michroma(30), (240, 240, 240))
 
@@ -3686,6 +3683,9 @@ class EndPlay(Part):
             width, height = self.game.screen.get_size()
 
             display_text_in_box(self.game.screen, 430, 1200, 60, 500, "KONEC", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 300, 900, 200, 600, "Vytvořil: Jan Kaluža", get_font_michroma(50), (240, 240, 240))
+            display_text_in_box(self.game.screen, 300, 900, 340, 700, "Hudba: Soňa Švíková", get_font_michroma(50), (240, 240, 240))
+
 
             self.yes_button.change_color(pygame.mouse.get_pos())
             self.yes_button.update(self.game.screen)

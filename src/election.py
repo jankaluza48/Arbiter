@@ -289,3 +289,18 @@ def play_background_music(file_path):
 def stop_background_music():
     """Funkce pro úplné zastavení hudby na pozadí"""
     pygame.mixer.music.stop()
+
+def get_final_result():
+    """výpočet a zobrazení konečných výsledků hry"""
+    game_variables = lib.game_variables
+    game_variables_texts = lib.game_variables_texts
+    result = ""
+    for variable in game_variables:
+        num = game_variables[variable] * round(random.uniform(0.80, 1.20), 2)
+        if num >= 8:
+            result += f"{game_variables_texts[variable]['title']} : {game_variables_texts[variable]['3']}\n"
+        elif num <= -1:
+            result += f"{game_variables_texts[variable]['title']} : {game_variables_texts[variable]['1']}\n"
+        else:
+            result += f"{game_variables_texts[variable]['title']} : {game_variables_texts[variable]['2']}\n"
+    return result
