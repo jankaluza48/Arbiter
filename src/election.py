@@ -1,4 +1,6 @@
 import random
+
+import pygame
 import lib 
 import json
 
@@ -252,3 +254,38 @@ def get_variables_regions(data: dict):
     if data["altus"] >= 2:
         change_game_variables({"economy" : 1, "radicalization" : 2})
 
+def update_setting(group: str, button: str):
+    """změna nastavení na základě voleb v menu nastavení"""
+    setting = lib.setting
+    setting[group] = button
+
+def display_text_in_box(screen, start_w: int, end_w: int, start_h: int, end_h: int, text: str, font, color)-> None:
+    """Funkce pro zobrazení textu v boxu, který se přizpůsobí velikosti textu a velikosti boxu"""
+    par = [word.split(' ') for word in text.splitlines()]
+    space = font.size(' ')[0]
+    start_w += 10
+    end_w -= 10
+    start_h += 10
+    end_h -= 10
+    old_w = start_w
+    for lines in par:
+        for words in lines:
+            words_box = font.render(words, True, color)
+            word_width, word_height = words_box.get_size()
+            if start_w + word_width >= end_w:
+                start_w = old_w
+                start_h += word_height
+            screen.blit(words_box, (start_w, start_h))
+            start_w += word_width + space
+        start_w = old_w
+        start_h += word_height
+
+def play_background_music(file_path):
+    """Funkce pro přehrávání hudby na pozadí, která se bude opakovat"""
+    pygame.mixer.music.load(file_path) 
+    pygame.mixer.music.set_volume(0.6) 
+    pygame.mixer.music.play(-1) 
+
+def stop_background_music():
+    """Funkce pro úplné zastavení hudby na pozadí"""
+    pygame.mixer.music.stop()

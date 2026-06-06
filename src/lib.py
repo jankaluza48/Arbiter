@@ -696,11 +696,14 @@ game_variables = {
     "social" : 0,
     "control_system" : 0,
     "crime" : 0,
-    "budget" : 0,
     "army" : 0,
     "diplomacy_alliance" : 0,
     "diplomacy_enemy" : 0,
 }
 
 player_history = {
+}
+
+setting = {
+    "music" : "Zapnuto",
 }

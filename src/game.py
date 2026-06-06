@@ -4,9 +4,8 @@ import pygame
 import json
 import sys
 from buttons import Button
-from lib import prefc, player_history
-from election import get_election_result, restart_game, change_game_variables, get_variables_regions, get_variables_subsidy
-from lib import parties, voters
+from lib import prefc, player_history, game_variables, parties, voters, setting
+from election import get_election_result, restart_game, change_game_variables, get_variables_regions, get_variables_subsidy, update_setting, display_text_in_box, play_background_music, stop_background_music
 
 """"classy pro jednolivé části hry"""
 
@@ -89,6 +88,7 @@ class Main_Menu(Part):
         Part.__init__(self, game)
         pygame.display.set_caption("Menu")
 
+
         self.menu_bg_og = pygame.image.load("../img/menu_bg.png")
 
         self.menu_text = get_font_michroma(400).render("ARBITER", True, "#660619")
@@ -98,6 +98,7 @@ class Main_Menu(Part):
 
     def display_menu(self):
         self.run_display = True
+        stop_background_music()
         while self.run_display:
             self.game.MENU_MOUSE_POS = pygame.mouse.get_pos()
 
@@ -130,8 +131,10 @@ class Main_Menu(Part):
                 pregame.display_play()
                 
             if self.OPTIONS_BUTTON.check_input(self.game.MENU_MOUSE_POS):
+                self.run_display = False
                 pygame.display.set_caption("Options")
-
+                options = Options(self.game)
+                options.display_options()
             if self.QUIT_BUTTON.check_input(self.game.MENU_MOUSE_POS):
                 self.game.running = False
                 self.run_display = False
@@ -144,11 +147,90 @@ class Main_Menu(Part):
 def get_font_michroma(size):
     return pygame.font.SysFont('Michroma', size)
 
+class Options(Part):
+    def __init__(self, game):
+        Part.__init__(self, game)
+        self.game.screen.fill((0,0,0))
+        self.game.reset_keys()
+
+        self.start_x = 375
+        self.start_y = 230
+        x = self.start_x
+        y = self.start_y 
+        self.max_x, self.max_y = self.game.screen.get_size()
+
+        self.button_1 = pygame.image.load("../img/false_button.png")
+        self.button_1_hover = pygame.image.load("../img/false_button_hover.png")
+        self.button_clicked = pygame.image.load("../img/true_button.png")
+        self.button_clicked_hover = pygame.image.load("../img/true_button_hover.png")
+        self.prefc = {
+            "music" : "Hudba",
+        }
+        self.options_data = {}
+        self.options_buttons = {}
+        self.options_labels = []
+        for one_prefer in self.prefc:
+            one_element = {one_prefer : 1}
+            self.options_data.update(one_element)
+            buttons = {}
+            button_eins = Button(image=self.button_1, pos=(x, y), text_input = "Vypnuto", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.button_1_hover, clicked_color="#eaeaea", clicked_image=self.button_clicked, clicked_color_hover="#ffffff", clicked_image_hover=self.button_clicked_hover)
+            button_zwei = Button(image=self.button_1, pos=(x+190, y), text_input = "Zapnuto", font = get_font_michroma(30), base_color = "#eaeaea", hover_color = "#ffffff", hover_image=self.button_1_hover, clicked_color="#eaeaea", clicked_image=self.button_clicked, clicked_color_hover="#ffffff", clicked_image_hover=self.button_clicked_hover)
+            if setting[one_prefer] == "Vypnuto":
+                button_eins.click_button()
+            elif setting[one_prefer] == "Zapnuto":
+                button_zwei.click_button()
+            buttons.update({1 : button_eins})
+            buttons.update({2 : button_zwei})
+            self.options_labels.append((x, y, self.prefc[one_prefer]))
+            y+=100
+            if y >= (self.max_y):
+                y = self.start_y
+                x += 250
+            self.options_buttons.update({one_prefer : buttons})
+
+    def display_options(self):
+        self.run_display = True
+        self.clock = pygame.time.Clock()
+        self.clock.tick(20)
+        
+        while self.run_display:
+            self.game.screen.fill((0,0,0))
+            for group in self.options_buttons:
+                for button in self.options_buttons[group]:
+                    self.options_buttons[group][button].change_color(pygame.mouse.get_pos())
+                    self.options_buttons[group][button].update(self.game.screen)
+
+            for x, y, text in self.options_labels:
+                display_text_in_box(self.game.screen, x-100, x+250, y-100, y+80, text, get_font_michroma(40), (240, 240, 240))
+
+            display_text_in_box(self.game.screen, 220, 1000, 60, 500, "Nastavení", get_font_michroma(50), (240, 240, 240))
+            
+            self.game.check_events()
+            self.check_input()
+            self.blit_screen()
+
+    def check_input(self):
+        if self.game.ESC:
+            self.run_display = False
+        if self.game.MOUSE_CLICK_L:
+            for group in self.options_buttons:
+                for button in self.options_buttons[group]:
+                    if self.options_buttons[group][button].check_input(pygame.mouse.get_pos()):
+                        self.options_buttons[group][button].click_button()
+                        self.options_buttons[group][button].update(self.game.screen)
+                        self.options_data[group] = button
+                        for button_selected in self.options_buttons[group]:
+                            if button_selected != button:
+                                self.options_buttons[group][button_selected].reset_click_button()
+                                update_setting(group, self.options_buttons[group][button].text_input)
+
+
 
 class PreGame(Part):
     def __init__(self, game):
         Part.__init__(self, game)
-        play_background_music("../sound/Arbiter.mp3")
+        if setting["music"] == "Zapnuto":
+            play_background_music("../sound/Arbiter.mp3")
         self.game.screen.fill((0,0,0))
 
         self.speed_typing = 6
@@ -3422,10 +3504,27 @@ class ThirtythirdPlay(Part):
         self.game.screen.fill((0,0,0))
         self.game.reset_keys()
 
-        with open('../txt/first_diplomatic_route_state_one_reaction.txt', encoding='utf-8') as reaction:
-            self.reaction = json.load(reaction)
+        if player_history["civil_war_decision"] == "yes":
+            if player_history["conflict_with_collaborator"] == "no":
+                if player_history["conflict_with_collaborator_solution"] == "state_one":
+                    text_path = '../txt/text/ends/collaborator_betrayer.txt'
+                else:
+                    if game_variables["army"] >= 5:
+                        text_path = '../txt/text/ends/good_army.txt'
+                    else:
+                        text_path = '../txt/text/ends/bad_army.txt'
+            else:
+                text_path = '../txt/text/ends/rentier.txt'
+        else:
+            if player_history["media_independence"] == "yes":
+                text_path = '../txt/text/ends/no_reaction_yes_liberty.txt'
+            else:
+                if game_variables["radicalization"] >= 10:
+                    text_path = '../txt/text/ends/no_reaction_no_liberty_sad.txt'
+                else:
+                    text_path = '../txt/text/ends/no_reaction_no_liberty_happy.txt'
 
-        with open('../txt/first_diplomatic_route_state_one.txt', encoding='utf-8') as text:
+        with open(text_path, encoding='utf-8') as text:
             self.text = json.load(text)
 
         with open('../txt/user_data/first_election_data.txt', encoding='utf-8') as data:
@@ -3462,7 +3561,6 @@ class ThirtythirdPlay(Part):
                 self.close_big_map.change_color(pygame.mouse.get_pos())
                 self.close_big_map.update(self.game.screen)
 
-            display_text_in_box(self.game.screen, 0, 350, 250, height-250, self.reaction, get_font_michroma(30), (240, 240, 240))
             display_text_in_box(self.game.screen, 450, 900, 150, height-250, self.text, get_font_michroma(30), (240, 240, 240))
 
             display_text_in_box(self.game.screen, 430, 1200, 60, 500, "Poslední pomazání", get_font_michroma(50), (240, 240, 240))
@@ -3486,6 +3584,7 @@ class ThirtythirdPlay(Part):
                 self.big_map_status = True
             if self.next_button.check_input(pygame.mouse.get_pos()):
                 self.run_display = False
+                print(game_variables)
                 next_play = ThirtyfourthPlay(self.game)
                 next_play.display_play()
 
@@ -3607,31 +3706,4 @@ class EndPlay(Part):
             if self.no_button.check_input(pygame.mouse.get_pos()):
                 pygame.quit()
                 sys.exit()
-                
-
-def display_text_in_box(screen, start_w: int, end_w: int, start_h: int, end_h: int, text: str, font, color)-> None:
-    """Funkce pro zobrazení textu v boxu, který se přizpůsobí velikosti textu a velikosti boxu"""
-    par = [word.split(' ') for word in text.splitlines()]
-    space = font.size(' ')[0]
-    start_w += 10
-    end_w -= 10
-    start_h += 10
-    end_h -= 10
-    old_w = start_w
-    for lines in par:
-        for words in lines:
-            words_box = font.render(words, True, color)
-            word_width, word_height = words_box.get_size()
-            if start_w + word_width >= end_w:
-                start_w = old_w
-                start_h += word_height
-            screen.blit(words_box, (start_w, start_h))
-            start_w += word_width + space
-        start_w = old_w
-        start_h += word_height
-
-def play_background_music(file_path):
-    """Funkce pro přehrávání hudby na pozadí, která se bude opakovat"""
-    pygame.mixer.music.load(file_path) 
-    pygame.mixer.music.set_volume(0.6) 
-    pygame.mixer.music.play(-1)       
+                      
