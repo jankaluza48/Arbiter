@@ -758,3 +758,4 @@ player_history = {
 setting = {
     "music" : "Zapnuto",
 }
+
